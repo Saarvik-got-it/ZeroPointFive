@@ -1,5 +1,5 @@
-import { SiteShell } from './components/sections';
+import AppRouter from './app/router';
 
 export default function App() {
-  return <SiteShell />;
+  return <AppRouter />;
 }

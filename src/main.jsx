@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './styles.css';
+import './styles/index.css';
+import './styles/tailwind.css';
 import '../Podcast Host Personal Brand Website_files/index-EVbxX1zz.css';
 import '../Podcast Host Personal Brand Website_files/fonts-code.css';
 
