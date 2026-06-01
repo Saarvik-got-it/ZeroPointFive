@@ -26,7 +26,6 @@ import {
   speakingEvents,
   stats,
 } from '../data/siteData';
-import PodcastsHubPage from './hub/PodcastsHub';
 
 function scrollToId(id) {
   if (id === 'top') {
@@ -37,43 +36,10 @@ function scrollToId(id) {
 }
 
 export function SiteShell() {
-  const [view, setView] = useState(() => (window.location.hash === '#hub' ? 'hub' : 'home'));
-
-  useEffect(() => {
-    const syncView = () => {
-      setView(window.location.hash === '#hub' ? 'hub' : 'home');
-    };
-
-    window.addEventListener('hashchange', syncView);
-    return () => window.removeEventListener('hashchange', syncView);
-  }, []);
-
-  const openHub = () => {
-    if (window.location.hash !== '#hub') {
-      window.location.hash = 'hub';
-    } else {
-      setView('hub');
-    }
-  };
-
-  const closeHub = () => {
-    if (window.location.hash === '#hub') {
-      window.location.hash = '';
-    } else {
-      setView('home');
-    }
-  };
-
-  if (view === 'hub') {
-    return <PodcastsHubPage />;
-  }
-
-  return (
-    <HomePage onNavigate={scrollToId} onOpenHub={openHub} />
-  );
+  return <HomePage onNavigate={scrollToId} />;
 }
 
-function HomePage({ onNavigate, onOpenHub }) {
+function HomePage({ onNavigate }) {
   return (
     <div className="relative min-h-screen" style={{ background: '#050505' }}>
       <div
@@ -89,7 +55,7 @@ function HomePage({ onNavigate, onOpenHub }) {
           top: '55vh',
         }}
       />
-      <Header onNavigate={onNavigate} onOpenHub={onOpenHub} />
+      <Header onNavigate={onNavigate} />
       <Hero onNavigate={onNavigate} />
       <SectionDivider />
       <PodcastSection />
@@ -110,7 +76,7 @@ function HomePage({ onNavigate, onOpenHub }) {
   );
 }
 
-function Header({ onNavigate, onOpenHub }) {
+function Header({ onNavigate }) {
   const isScrolled = useScrollState();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -136,13 +102,7 @@ function Header({ onNavigate, onOpenHub }) {
           {sections.map((section) => (
             <button
               key={section.label}
-              onClick={() => {
-                if (section.href === '#hub') {
-                  onOpenHub();
-                  return;
-                }
-                onNavigate(section.href.replace('#', ''));
-              }}
+              onClick={() => onNavigate(section.href.replace('#', ''))}
               className="font-mono text-[11px] tracking-widest uppercase transition-colors duration-300"
               style={{ color: 'rgb(102, 102, 102)' }}
             >
@@ -169,11 +129,6 @@ function Header({ onNavigate, onOpenHub }) {
               <button
                 key={section.label}
                 onClick={() => {
-                  if (section.href === '#hub') {
-                    onOpenHub();
-                    setMenuOpen(false);
-                    return;
-                  }
                   onNavigate(section.href.replace('#', ''));
                   setMenuOpen(false);
                 }}

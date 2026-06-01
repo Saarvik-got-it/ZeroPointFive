@@ -7,7 +7,6 @@ export const asset = (name) =>
 export const sections = [
   { label: "Show", href: "#podcast" },
   { label: "Journey", href: "#journey" },
-  { label: "Podcasts Hub", href: "#hub" },
   { label: "Host", href: "#about" },
   { label: "Speaking", href: "#speaking" },
 ];
