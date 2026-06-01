@@ -244,9 +244,16 @@ function Hero({ onNavigate }) {
         aria-hidden="true"
         style={{ background: 'radial-gradient(ellipse 85% 75% at 50% 50%, transparent 0%, rgba(5, 5, 5, 0.55) 55%, rgba(5, 5, 5, 1) 100%)' }}
       />
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8 pt-24 pb-16">
+      {/* Node Network — desktop: absolutely positioned, covering full screen for perfect interactivity */}
+      <div
+        className="hidden md:block absolute inset-0 z-[5]"
+        aria-hidden="true"
+      >
+        <NodeNetwork />
+      </div>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 flex flex-col justify-center gap-8 pt-24 pb-16" style={{ minHeight: '100vh', pointerEvents: 'none' }}>
         {/* Left column: Hero text — unchanged content */}
-        <div className="w-full md:w-[58%] flex flex-col items-center md:items-start text-center md:text-left gap-8">
+        <div className="hero__text-block">
           <RevealText delay={0.1} ready={ready} className="eyebrow tracking-[0.35em]">
             Zero Point Five Show
           </RevealText>
@@ -258,7 +265,7 @@ function Hero({ onNavigate }) {
           <RevealText delay={0.65} ready={ready} className="max-w-lg text-base md:text-lg leading-relaxed text-pretty" style={{ color: 'rgb(112, 112, 112)' }}>
             The podcast where founders share what they&apos;ve never said before.
           </RevealText>
-          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+          <div className="hero__button-group">
             <button onClick={() => onNavigate('podcast')} className="cin-btn">
               Uncover the Story <ArrowRightIcon className="h-3.5 w-3.5" />
             </button>
@@ -267,12 +274,8 @@ function Hero({ onNavigate }) {
             </a>
           </div>
         </div>
-        {/* Right column: Node Network — desktop */}
-        <div className="hidden md:flex w-[42%] items-center justify-center" style={{ minHeight: 520, marginRight: '-2%' }}>
-          <NodeNetwork />
-        </div>
-        {/* Compact Node Network — mobile */}
-        <div className="md:hidden w-full" style={{ height: 280 }}>
+        {/* Compact Node Network — mobile only */}
+        <div className="md:hidden w-full" style={{ height: 300, pointerEvents: 'auto' }}>
           <NodeNetwork compact />
         </div>
       </div>

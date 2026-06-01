@@ -148,7 +148,7 @@ export function projectTo2D(node, time, cx, cy, sphereRadius, rotationSpeed = 0.
   const scale = fov / (fov + z);
 
   // 2D drift (screen-space, for subtle floating feel)
-  const screenDrift = getNodeDrift(time, seed + 100, 2.5);
+  const screenDrift = getNodeDrift(time, seed + 100, 3.5);
 
   const screenX = cx + x * sphereRadius * scale + screenDrift.dx;
   const screenY = cy + y * sphereRadius * scale + screenDrift.dy;
@@ -168,9 +168,9 @@ export function projectTo2D(node, time, cx, cy, sphereRadius, rotationSpeed = 0.
     z,
     depth: depthNormalized,
     opacity: lerp(0.2, 1.0, depthNormalized),
-    nodeRadius: node.type === 'primary' ? lerp(10, 18, depthNormalized) : lerp(5, 9, depthNormalized),
-    fontSize: node.type === 'primary' ? lerp(8, 11, depthNormalized) : lerp(6, 8.5, depthNormalized),
-    glowRadius: node.type === 'primary' ? lerp(4, 14, depthNormalized) : lerp(2, 6, depthNormalized),
+    nodeRadius: node.type === 'primary' ? lerp(16, 26, depthNormalized) : lerp(8, 14, depthNormalized),
+    fontSize: node.type === 'primary' ? lerp(10, 13, depthNormalized) : lerp(7.5, 10, depthNormalized),
+    glowRadius: node.type === 'primary' ? lerp(8, 22, depthNormalized) : lerp(4, 10, depthNormalized),
   };
 }
 
