@@ -1,0 +1,128 @@
+/* ─────────────────────────────────────────────
+   NodeNetwork — Scoped Styles
+   Container, edge mask, tooltip overlay
+   ───────────────────────────────────────────── */
+
+.node-network {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Radial fade at edges — network dissolves into darkness */
+  mask-image: radial-gradient(ellipse 90% 85% at 50% 48%, black 35%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 48%, black 35%, transparent 100%);
+}
+
+.node-network--compact {
+  mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 95%);
+}
+
+.node-network__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+/* ─── Tooltip ─────────────────────────────── */
+
+.node-network__tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(239, 170, 52, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(200, 200, 200, 0.9);
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 20;
+  white-space: nowrap;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(239, 170, 52, 0.04);
+}
+
+.node-network__tooltip--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.node-network__tooltip-label {
+  color: #efaa34;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  margin-bottom: 6px;
+}
+
+.node-network__tooltip-stat {
+  color: rgba(160, 160, 160, 0.9);
+  line-height: 1.7;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+}
+
+.node-network__tooltip-badge {
+  color: #efaa34;
+  margin-top: 5px;
+  font-size: 9px;
+  opacity: 0.7;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.node-network__tooltip-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(239, 170, 52, 0.2), transparent);
+  margin: 6px 0;
+}
+
+/* ─── Hero Layout Adjustments ─── */
+.hero__text-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.hero__button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .hero__button-group {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero__text-block {
+    width: 55%;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .hero__button-group {
+    justify-content: flex-start;
+    width: auto;
+  }
+}
+
