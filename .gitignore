@@ -37,3 +37,10 @@ assets/
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# Subfolder exclusions
+frontend/node_modules/
+frontend/dist/
+backend/node_modules/
+backend/.env
+
