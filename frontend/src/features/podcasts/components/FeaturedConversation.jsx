@@ -7,6 +7,7 @@
 import { useRef, useState, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { featuredEpisode } from '@/features/podcasts/data/podcastsData';
+import HeroWaveTrails from './HeroWaveTrails';
 
 export default function FeaturedConversation({ onPlay }) {
   const cardRef = useRef(null);
@@ -37,6 +38,9 @@ export default function FeaturedConversation({ onPlay }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
+      {/* ── V2: EKG wave trails on the right side ── */}
+      <HeroWaveTrails />
+
       <div
         className="featured-conv__card"
         ref={cardRef}
@@ -54,14 +58,38 @@ export default function FeaturedConversation({ onPlay }) {
             alt={guest.name}
             loading="eager"
             style={{
-              transform: `translate(${imageOffset.x}px, ${imageOffset.y}px) scale(${isHovered ? 1.03 : 1})`,
+              animationName: isHovered ? 'none' : undefined,
+              transform: isHovered
+                ? `translate(${imageOffset.x}px, ${imageOffset.y}px) scale(1.03)`
+                : undefined,
             }}
           />
         </div>
 
-        {/* ── Gradient & glow overlays ── */}
+        {/* ── V2: Cinematic dust particles ── */}
+        <div className="featured-conv__particles" aria-hidden="true">
+          {Array.from({ length: 20 }, (_, i) => (
+            <span
+              key={i}
+              className="featured-conv__particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                width: `${0.5 + Math.random() * 1.5}px`,
+                height: `${0.5 + Math.random() * 1.5}px`,
+                '--dx': `${(Math.random() - 0.5) * 80}px`,
+                '--dy': `${-20 - Math.random() * 60}px`,
+                animationDuration: `${8 + Math.random() * 12}s`,
+                animationDelay: `${Math.random() * 10}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* ── Gradient, glow & ambient overlays ── */}
         <div className="featured-conv__gradient" />
         <div className="featured-conv__glow" />
+        <div className="featured-conv__ambient-glow" />
 
         {/* ── Content ── */}
         <div className="featured-conv__content">

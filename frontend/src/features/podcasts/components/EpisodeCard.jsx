@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────────────────
-// EpisodeCard — Premium multi-variant episode card
+// EpisodeCard V2 — Premium multi-variant episode card
 // Supports default, influential, trending, and surprise
 // variants with scroll-triggered reveal animations.
+// V2: Hover depth layer reveals hidden quote & topic.
 // ─────────────────────────────────────────────────────────
 
 import { useRef } from 'react';
 import { useInView } from '@/hooks/useInView';
+import { hoverReveals } from '@/features/podcasts/data/podcastsData';
 
 export default function EpisodeCard({
   episode,
@@ -17,6 +19,7 @@ export default function EpisodeCard({
   const isVisible = useInView(cardRef, { once: true, margin: '-40px' });
 
   const {
+    id,
     title,
     guest,
     duration,
@@ -30,6 +33,9 @@ export default function EpisodeCard({
     trendDelta,
     surprise,
   } = episode;
+
+  // V2: Hover depth data
+  const reveal = hoverReveals[id];
 
   const rootClass = [
     'episode-card',
@@ -85,6 +91,14 @@ export default function EpisodeCard({
               className="episode-card__progress-bar"
               style={{ width: `${progress}%` }}
             />
+          </div>
+        )}
+
+        {/* V2: Depth reveal layer — appears on hover */}
+        {reveal && (
+          <div className="episode-card__depth-reveal">
+            <div className="episode-card__depth-quote">{reveal.quote}</div>
+            <div className="episode-card__depth-topic">{reveal.topic}</div>
           </div>
         )}
       </div>

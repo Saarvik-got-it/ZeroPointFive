@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────
-// PodcastHubPage — The Conversation Discovery Engine
-// Assembles all hub components into a cohesive page.
+// PodcastHubPage V2 — The Conversation Discovery Engine
+// Hierarchy-first layout: hero → search → discovery.
 // ─────────────────────────────────────────────────────────
 
 import { useState, useCallback } from 'react';
@@ -18,6 +18,7 @@ import ContentRail from '@/features/podcasts/components/ContentRail';
 import EpisodeCard from '@/features/podcasts/components/EpisodeCard';
 import ConversationTrails from '@/features/podcasts/components/ConversationTrails';
 import NowPlaying from '@/features/podcasts/components/NowPlaying';
+import IntelligencePulse from '@/features/podcasts/components/IntelligencePulse';
 
 // Data
 import {
@@ -47,44 +48,49 @@ export default function PodcastHubPage() {
     });
   }, []);
 
-  // Filter helper — returns true if episode matches active category
+  // Filter helper
   const matchesCategory = useCallback((episode) => {
     if (activeCategory === 'all') return true;
     return episode.category?.toLowerCase() === activeCategory.toLowerCase();
   }, [activeCategory]);
 
-  // Filter each rail (keep at least 2 items for visual continuity)
   const filterRail = useCallback((items) => {
     if (activeCategory === 'all') return items;
     const filtered = items.filter(matchesCategory);
     return filtered.length >= 2 ? filtered : items;
   }, [activeCategory, matchesCategory]);
 
+  const isPlaying = !!nowPlayingTrack?.isPlaying;
+
   return (
     <PodcastHubLayout>
       <AmbientCanvas />
 
-      {/* Section 1: Discovery Search */}
-      <div className="hub-section hub-section--first">
-        <DiscoverySearch />
-      </div>
+      {/* ═══ V2 HERO ZONE ═══
+          Featured conversation dominates the viewport.
+          Search + categories are compressed below, not above. */}
 
-      {/* Section 2: Category Pills */}
-      <div className="hub-section" style={{ paddingTop: '1.5rem', paddingBottom: '1.5rem' }}>
-        <CategoryPills
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
-      </div>
-
-      {/* Section 3: Featured Conversation */}
-      <div className="hub-section" style={{ paddingTop: '1rem' }}>
+      {/* Section 1: Featured Conversation — FIRST THING the eye sees */}
+      <div className="hub-section hub-section--first" style={{ paddingBottom: '1rem' }}>
         <FeaturedConversation onPlay={handlePlay} />
+      </div>
+
+      {/* Section 2: Search + Categories — integrated, compressed */}
+      <div className="hub-hero-zone">
+        <div className="hub-section" style={{ paddingTop: '1rem', paddingBottom: '0.5rem' }}>
+          <DiscoverySearch />
+        </div>
+        <div className="hub-section" style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
+          <CategoryPills
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+          />
+        </div>
       </div>
 
       <div className="hub-section__divider" />
 
-      {/* Section 4: Content Rails */}
+      {/* Section 3: Content Rails */}
       <ContentRail title="Continue Exploring" id="continue-exploring">
         {filterRail(continueExploring).map((ep, i) => (
           <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
@@ -110,6 +116,11 @@ export default function PodcastHubPage() {
           <EpisodeCard key={ep.id} episode={ep} variant="trending" index={i} onPlay={handlePlay} />
         ))}
       </ContentRail>
+
+      <div className="hub-section__divider" />
+
+      {/* Section 4: Intelligence Pulse — the signature moment */}
+      <IntelligencePulse activeCategory={activeCategory} isPlaying={isPlaying} />
 
       <div className="hub-section__divider" />
 
@@ -147,7 +158,7 @@ export default function PodcastHubPage() {
       {/* Spacer for Now Playing bar */}
       <div style={{ height: '80px' }} />
 
-      {/* Section 6: Now Playing */}
+      {/* Section 6: Now Playing V2 */}
       <NowPlaying track={nowPlayingTrack} />
     </PodcastHubLayout>
   );
