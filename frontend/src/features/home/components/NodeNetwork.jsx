@@ -517,11 +517,13 @@ function drawLensFlare(ctx, cx, cy, radius, time) {
 
 // ─── Main Component ──────────────────────────────────────────
 
-export function NodeNetwork({ compact = false }) {
+export function NodeNetwork({ compact = false, onNodeDiscover }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [clickedNode, setClickedNode] = useState(null);
+  const clickTimerRef = useRef(null);
 
   const stateRef = useRef({
     mouse: { x: -9999, y: -9999 },
@@ -586,9 +588,34 @@ export function NodeNetwork({ compact = false }) {
       setHoveredNode(null);
     };
 
+    // ─── Click / Double-click handlers ──
+    const handleClick = () => {
+      if (!onNodeDiscover || compact) return;
+      const id = stateRef.current.hoveredId;
+      if (!id) {
+        setClickedNode(null);
+        return;
+      }
+      // If already clicked and this is a quick second click, treat as double
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+        // Double-click: navigate
+        setClickedNode(null);
+        onNodeDiscover(id);
+        return;
+      }
+      // Single click: show discover prompt
+      setClickedNode(id);
+      clickTimerRef.current = setTimeout(() => {
+        clickTimerRef.current = null;
+      }, 500);
+    };
+
     if (!compact) {
       canvas.addEventListener('mousemove', handleMouseMove);
       canvas.addEventListener('mouseleave', handleMouseLeave);
+      canvas.addEventListener('click', handleClick);
     }
 
     // ─── Animation Loop ────────────────
@@ -750,11 +777,14 @@ export function NodeNetwork({ compact = false }) {
       if (!compact) {
         canvas.removeEventListener('mousemove', handleMouseMove);
         canvas.removeEventListener('mouseleave', handleMouseLeave);
+        canvas.removeEventListener('click', handleClick);
       }
+      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
     };
   }, [compact, activeNodes]);
 
   const hoveredData = hoveredNode ? allNodes.find(n => n.id === hoveredNode) : null;
+  const clickedData = clickedNode ? allNodes.find(n => n.id === clickedNode) : null;
 
   return (
     <div
@@ -779,6 +809,21 @@ export function NodeNetwork({ compact = false }) {
           {hoveredData.tooltip.badge && (
             <div className="node-network__tooltip-badge">● {hoveredData.tooltip.badge}</div>
           )}
+        </div>
+      )}
+      {/* Discovery prompt — appears on click, invites double-click to navigate */}
+      {clickedData && onNodeDiscover && (
+        <div
+          className="node-network__tooltip node-network__tooltip--visible"
+          style={{
+            left: Math.min(tooltipPos.x, (stateRef.current.width || 400) - 200),
+            top: Math.max(10, tooltipPos.y + 50),
+          }}
+        >
+          <div className="node-network__tooltip-label">Explore {clickedData.label}</div>
+          <div className="node-network__tooltip-divider" />
+          <div className="node-network__tooltip-stat">{clickedData.tooltip?.line1 || 'Conversations'}</div>
+          <div className="node-network__tooltip-badge" style={{ cursor: 'pointer' }}>Double Click To Discover →</div>
         </div>
       )}
     </div>

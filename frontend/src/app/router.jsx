@@ -7,7 +7,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/podcast-hub" element={<PodcastHubPage />} />
+        <Route path="/podcasts" element={<PodcastHubPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

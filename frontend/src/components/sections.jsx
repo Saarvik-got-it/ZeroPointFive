@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { NodeNetwork } from '../features/home/components/NodeNetwork';
 import { useInView } from '../hooks/useInView';
 import { useScrollState } from '../hooks/useScrollState';
@@ -110,6 +111,13 @@ function Header({ onNavigate }) {
               {section.label}
             </button>
           ))}
+          <Link
+            to="/podcasts"
+            className="font-mono text-[11px] tracking-widest uppercase transition-colors duration-300"
+            style={{ color: 'rgb(102, 102, 102)' }}
+          >
+            Podcasts
+          </Link>
           <button onClick={() => onNavigate('speaking')} className="cin-btn text-[10px]">
             Book
           </button>
@@ -139,6 +147,14 @@ function Header({ onNavigate }) {
                 {section.label}
               </button>
             ))}
+            <Link
+              to="/podcasts"
+              onClick={() => setMenuOpen(false)}
+              className="font-mono text-[11px] tracking-widest uppercase text-left"
+              style={{ color: 'rgb(140, 140, 140)' }}
+            >
+              Podcasts
+            </Link>
             <button
               onClick={() => {
                 onNavigate('speaking');
@@ -156,6 +172,7 @@ function Header({ onNavigate }) {
 }
 
 function Hero({ onNavigate }) {
+  const navigate = useNavigate();
   const canvasRef = useRef(null);
   const [ready, setReady] = useState(false);
 
@@ -249,7 +266,7 @@ function Hero({ onNavigate }) {
         className="hidden md:block absolute inset-0 z-[5]"
         aria-hidden="true"
       >
-        <NodeNetwork />
+        <NodeNetwork onNodeDiscover={(categoryId) => navigate(`/podcasts?category=${categoryId}`)} />
       </div>
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 flex flex-col justify-center gap-8 pt-24 pb-16" style={{ minHeight: '100vh', pointerEvents: 'none' }}>
         {/* Left column: Hero text — unchanged content */}
