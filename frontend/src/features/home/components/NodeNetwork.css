@@ -40,8 +40,13 @@
   letter-spacing: 0.1em;
   color: rgba(200, 200, 200, 0.9);
   opacity: 0;
-  transform: translateY(6px) scale(0.96);
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transform: translateY(4px) scale(0.97);
+  filter: blur(2px);
+  /* Exit transition — slow, premium outro */
+  transition:
+    opacity 750ms ease-out,
+    transform 750ms ease-out,
+    filter 650ms ease-out;
   z-index: 20;
   white-space: nowrap;
   box-shadow:
@@ -52,6 +57,12 @@
 .node-network__tooltip--visible {
   opacity: 1;
   transform: translateY(0) scale(1);
+  filter: blur(0px);
+  /* Enter transition — snappy, responsive */
+  transition:
+    opacity 180ms ease-out,
+    transform 200ms ease-out,
+    filter 150ms ease-out;
 }
 
 .node-network__tooltip-label {

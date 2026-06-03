@@ -524,10 +524,16 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [clickedNode, setClickedNode] = useState(null);
   const clickTimerRef = useRef(null);
+  const leaveTimerRef = useRef(null);
+  const tooltipHideRef = useRef(null); // delays tooltip CSS exit to sync with glow
+  // Tooltip cache: keeps DOM mounted during CSS exit transition
+  const [tooltipCache, setTooltipCache] = useState(null);
+  const tooltipUnmountRef = useRef(null);
 
   const stateRef = useRef({
     mouse: { x: -9999, y: -9999 },
     hoveredId: null,
+    lastHoveredId: null, // persists during outro fade
     hoverProgress: 0,
     time: 0,
     particles: [],
@@ -584,8 +590,24 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
     const handleMouseLeave = () => {
       state.mouse.x = -9999;
       state.mouse.y = -9999;
-      state.hoveredId = null;
-      setHoveredNode(null);
+      // Phase 1: Delay tooltip CSS exit to sync with glow fade
+      if (tooltipHideRef.current) clearTimeout(tooltipHideRef.current);
+      tooltipHideRef.current = setTimeout(() => {
+        setHoveredNode(null);
+        tooltipHideRef.current = null;
+      }, 800);
+      // Phase 2: Grace period — canvas glow/connections stay alive
+      if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+      leaveTimerRef.current = setTimeout(() => {
+        state.hoveredId = null;
+        leaveTimerRef.current = null;
+      }, 600);
+      // Phase 3: Tooltip DOM unmount — well after CSS exit completes
+      if (tooltipUnmountRef.current) clearTimeout(tooltipUnmountRef.current);
+      tooltipUnmountRef.current = setTimeout(() => {
+        setTooltipCache(null);
+        tooltipUnmountRef.current = null;
+      }, 1700);
     };
 
     // ─── Click / Double-click handlers ──
@@ -664,24 +686,78 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
           }
         });
 
-        if (closestId !== state.hoveredId) {
-          state.hoveredId = closestId;
-          state.hoverProgress = 0;
-          setHoveredNode(closestId);
-          if (closestId && nodeMap[closestId]) {
-            const np = nodeMap[closestId];
-            setTooltipPos({
-              x: np.screenX + np.nodeRadius + 20,
-              y: np.screenY - 12,
-            });
+        // ── Hit-test result handling ──
+        if (closestId) {
+          // Cursor is on a node
+          if (closestId !== state.hoveredId) {
+            // Moving onto a NEW node
+            state.hoveredId = closestId;
+            state.lastHoveredId = closestId;
+            state.hoverProgress = 0;
+            setHoveredNode(closestId);
+            if (nodeMap[closestId]) {
+              const np = nodeMap[closestId];
+              setTooltipPos({
+                x: np.screenX + np.nodeRadius + 20,
+                y: np.screenY - 12,
+              });
+            }
+            // Cache tooltip data for exit transition
+            const nd = activeNodes.find(n => n.id === closestId);
+            if (nd && nd.tooltip && nodeMap[closestId]) {
+              const np = nodeMap[closestId];
+              setTooltipCache({
+                data: nd,
+                pos: {
+                  x: np.screenX + np.nodeRadius + 20,
+                  y: np.screenY - 12,
+                },
+              });
+            }
           }
+          // Cancel any pending leave timers — cursor is on a node
+          if (tooltipHideRef.current) {
+            clearTimeout(tooltipHideRef.current);
+            tooltipHideRef.current = null;
+          }
+          if (leaveTimerRef.current) {
+            clearTimeout(leaveTimerRef.current);
+            leaveTimerRef.current = null;
+          }
+          if (tooltipUnmountRef.current) {
+            clearTimeout(tooltipUnmountRef.current);
+            tooltipUnmountRef.current = null;
+          }
+        } else if (state.hoveredId && !leaveTimerRef.current) {
+          // Cursor just left a node (but still on canvas)
+          // Start graceful outro — synced with handleMouseLeave
+          if (tooltipHideRef.current) clearTimeout(tooltipHideRef.current);
+          tooltipHideRef.current = setTimeout(() => {
+            setHoveredNode(null);
+            tooltipHideRef.current = null;
+          }, 800);
+          if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+          leaveTimerRef.current = setTimeout(() => {
+            state.hoveredId = null;
+            leaveTimerRef.current = null;
+          }, 600);
+          if (tooltipUnmountRef.current) clearTimeout(tooltipUnmountRef.current);
+          tooltipUnmountRef.current = setTimeout(() => {
+            setTooltipCache(null);
+            tooltipUnmountRef.current = null;
+          }, 1700);
         }
 
         // Smooth hover progress
         if (state.hoveredId) {
           state.hoverProgress = Math.min(1, state.hoverProgress + dt * 4.5);
         } else {
-          state.hoverProgress = Math.max(0, state.hoverProgress - dt * 6);
+          // Slow decay for premium outro (~1s full fade)
+          state.hoverProgress = Math.max(0, state.hoverProgress - dt * 1.0);
+          // Clear lastHoveredId only when fully faded
+          if (state.hoverProgress <= 0) {
+            state.lastHoveredId = null;
+          }
         }
       }
 
@@ -697,8 +773,10 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
       drawLensFlare(ctx, cx, cy, sphereRadius, state.time);
 
       // Layer 4: Hover aura (behind connections and nodes)
-      if (state.hoveredId && nodeMap[state.hoveredId] && state.hoverProgress > 0.1) {
-        const hp = nodeMap[state.hoveredId];
+      // Use lastHoveredId so aura fades with hoverProgress
+      const activeRenderId = state.lastHoveredId;
+      if (activeRenderId && nodeMap[activeRenderId] && state.hoverProgress > 0.05) {
+        const hp = nodeMap[activeRenderId];
         drawHoverAura(ctx, hp.screenX, hp.screenY, state.time, state.hoverProgress);
       }
 
@@ -714,8 +792,8 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
         let lineW = lerp(0.5, 1.2, avgDepth);
 
         // ── Hover: boost connected, dim unconnected ──
-        if (state.hoveredId && state.hoverProgress > 0.05) {
-          const isConnected = conn.from === state.hoveredId || conn.to === state.hoveredId;
+        if (activeRenderId && state.hoverProgress > 0.05) {
+          const isConnected = conn.from === activeRenderId || conn.to === activeRenderId;
           if (isConnected) {
             baseAlpha = lerp(baseAlpha, 0.65, state.hoverProgress);
             glowStrength = lerp(glowStrength, 0.55, state.hoverProgress);
@@ -746,12 +824,12 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
 
       // Layer 8: Nodes (back to front)
       projected.forEach(proj => {
-        const isHovered = proj.id === state.hoveredId;
-        const isNeighbor = state.hoveredId && adjacencyMap[state.hoveredId]?.has(proj.id);
+        const isHovered = proj.id === activeRenderId && state.hoverProgress > 0.05;
+        const isNeighbor = activeRenderId && state.hoverProgress > 0.05 && adjacencyMap[activeRenderId]?.has(proj.id);
         let dimFactor = 1;
 
         // Dim unrelated nodes strongly
-        if (state.hoveredId && !isHovered && !isNeighbor) {
+        if (activeRenderId && state.hoverProgress > 0.05 && !isHovered && !isNeighbor) {
           dimFactor = lerp(1, 0.12, state.hoverProgress);
         }
 
@@ -780,6 +858,9 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
         canvas.removeEventListener('click', handleClick);
       }
       if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+      if (tooltipHideRef.current) clearTimeout(tooltipHideRef.current);
+      if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+      if (tooltipUnmountRef.current) clearTimeout(tooltipUnmountRef.current);
     };
   }, [compact, activeNodes]);
 
@@ -792,22 +873,23 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
       className={`node-network${compact ? ' node-network--compact' : ''}`}
     >
       <canvas ref={canvasRef} className="node-network__canvas" />
-      {hoveredData && hoveredData.tooltip && (
+      {/* Tooltip — stays mounted via cache during CSS exit transition */}
+      {tooltipCache && tooltipCache.data.tooltip && (
         <div
-          className={`node-network__tooltip${hoveredData ? ' node-network__tooltip--visible' : ''}`}
+          className={`node-network__tooltip${hoveredNode ? ' node-network__tooltip--visible' : ''}`}
           style={{
-            left: Math.min(tooltipPos.x, (stateRef.current.width || 400) - 170),
-            top: Math.max(10, tooltipPos.y),
+            left: Math.min(tooltipCache.pos.x, (stateRef.current.width || 400) - 170),
+            top: Math.max(10, tooltipCache.pos.y),
           }}
         >
-          <div className="node-network__tooltip-label">{hoveredData.label}</div>
+          <div className="node-network__tooltip-label">{tooltipCache.data.label}</div>
           <div className="node-network__tooltip-divider" />
-          <div className="node-network__tooltip-stat">{hoveredData.tooltip.line1}</div>
-          {hoveredData.tooltip.line2 && (
-            <div className="node-network__tooltip-stat">{hoveredData.tooltip.line2}</div>
+          <div className="node-network__tooltip-stat">{tooltipCache.data.tooltip.line1}</div>
+          {tooltipCache.data.tooltip.line2 && (
+            <div className="node-network__tooltip-stat">{tooltipCache.data.tooltip.line2}</div>
           )}
-          {hoveredData.tooltip.badge && (
-            <div className="node-network__tooltip-badge">● {hoveredData.tooltip.badge}</div>
+          {tooltipCache.data.tooltip.badge && (
+            <div className="node-network__tooltip-badge">● {tooltipCache.data.tooltip.badge}</div>
           )}
         </div>
       )}
