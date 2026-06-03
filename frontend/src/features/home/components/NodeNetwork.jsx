@@ -590,24 +590,17 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
     const handleMouseLeave = () => {
       state.mouse.x = -9999;
       state.mouse.y = -9999;
-      // Phase 1: Delay tooltip CSS exit to sync with glow fade
+      // Symmetric outro — clear immediately, let hoverProgress decay handle visuals
+      state.hoveredId = null;
+      setHoveredNode(null);
+      // Tooltip DOM unmount after CSS exit completes
       if (tooltipHideRef.current) clearTimeout(tooltipHideRef.current);
-      tooltipHideRef.current = setTimeout(() => {
-        setHoveredNode(null);
-        tooltipHideRef.current = null;
-      }, 800);
-      // Phase 2: Grace period — canvas glow/connections stay alive
       if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
-      leaveTimerRef.current = setTimeout(() => {
-        state.hoveredId = null;
-        leaveTimerRef.current = null;
-      }, 600);
-      // Phase 3: Tooltip DOM unmount — well after CSS exit completes
       if (tooltipUnmountRef.current) clearTimeout(tooltipUnmountRef.current);
       tooltipUnmountRef.current = setTimeout(() => {
         setTooltipCache(null);
         tooltipUnmountRef.current = null;
-      }, 1700);
+      }, 350);
     };
 
     // ─── Click / Double-click handlers ──
@@ -730,30 +723,24 @@ export function NodeNetwork({ compact = false, onNodeDiscover }) {
           }
         } else if (state.hoveredId && !leaveTimerRef.current) {
           // Cursor just left a node (but still on canvas)
-          // Start graceful outro — synced with handleMouseLeave
+          // Symmetric outro — clear immediately, let decay handle visuals
+          state.hoveredId = null;
+          setHoveredNode(null);
           if (tooltipHideRef.current) clearTimeout(tooltipHideRef.current);
-          tooltipHideRef.current = setTimeout(() => {
-            setHoveredNode(null);
-            tooltipHideRef.current = null;
-          }, 800);
           if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
-          leaveTimerRef.current = setTimeout(() => {
-            state.hoveredId = null;
-            leaveTimerRef.current = null;
-          }, 600);
           if (tooltipUnmountRef.current) clearTimeout(tooltipUnmountRef.current);
           tooltipUnmountRef.current = setTimeout(() => {
             setTooltipCache(null);
             tooltipUnmountRef.current = null;
-          }, 1700);
+          }, 350);
         }
 
         // Smooth hover progress
         if (state.hoveredId) {
           state.hoverProgress = Math.min(1, state.hoverProgress + dt * 4.5);
         } else {
-          // Slow decay for premium outro (~1s full fade)
-          state.hoverProgress = Math.max(0, state.hoverProgress - dt * 1.0);
+          // Symmetric decay — same rate as intro (dt * 4.5 ≈ 220ms)
+          state.hoverProgress = Math.max(0, state.hoverProgress - dt * 4.5);
           // Clear lastHoveredId only when fully faded
           if (state.hoverProgress <= 0) {
             state.lastHoveredId = null;

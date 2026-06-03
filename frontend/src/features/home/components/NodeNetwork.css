@@ -42,11 +42,11 @@
   opacity: 0;
   transform: translateY(4px) scale(0.97);
   filter: blur(2px);
-  /* Exit transition — slow, premium outro */
+  /* Exit transition — symmetric with intro (~220ms) */
   transition:
-    opacity 750ms ease-out,
-    transform 750ms ease-out,
-    filter 650ms ease-out;
+    opacity 220ms ease-out,
+    transform 220ms ease-out,
+    filter 200ms ease-out;
   z-index: 20;
   white-space: nowrap;
   box-shadow:
