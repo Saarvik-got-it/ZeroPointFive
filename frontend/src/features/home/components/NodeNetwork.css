@@ -31,7 +31,7 @@
   position: absolute;
   pointer-events: none;
   background: rgba(10, 10, 10, 0.92);
-  border: 1px solid rgba(239, 170, 52, 0.2);
+  border: 1px solid rgba(154, 217, 74, 0.18);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 10px 14px;
@@ -51,7 +51,7 @@
   white-space: nowrap;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(239, 170, 52, 0.04);
+    0 0 40px rgba(154, 217, 74, 0.04);
 }
 
 .node-network__tooltip--visible {
@@ -66,7 +66,7 @@
 }
 
 .node-network__tooltip-label {
-  color: #efaa34;
+  color: #9AD94A;
   text-transform: uppercase;
   font-weight: 700;
   font-size: 11px;
@@ -82,7 +82,7 @@
 }
 
 .node-network__tooltip-badge {
-  color: #efaa34;
+  color: #9AD94A;
   margin-top: 5px;
   font-size: 9px;
   opacity: 0.7;
@@ -93,7 +93,7 @@
 .node-network__tooltip-divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(239, 170, 52, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(154, 217, 74, 0.18), transparent);
   margin: 6px 0;
 }
 

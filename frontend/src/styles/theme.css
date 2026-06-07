@@ -1,0 +1,61 @@
+/* ═══════════════════════════════════════════════════════════════
+   Zero Point Five — Centralized Design Token System
+   
+   SINGLE SOURCE OF TRUTH for the brand color palette.
+   
+   To change the brand identity, edit only this file.
+   All components, CSS files, and canvas renderers should
+   derive their colors from these semantic tokens.
+   
+   Current Brand: Founder Green — Premium startup ecosystem
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Background System ────────────────────────────────── */
+  --bg-primary:    #050505;
+  --bg-secondary:  #0A0A0A;
+  --bg-surface:    #101010;
+  --bg-elevated:   #141414;
+
+  /* ─── Typography ───────────────────────────────────────── */
+  --text-primary:   #F5F5F5;
+  --text-secondary: #B5B5B5;
+  --text-muted:     #7A7A7A;
+  --text-dim:       #474747;
+
+  /* ─── Brand Accent — Founder Green ─────────────────────── */
+  --accent-primary:         #9AD94A;
+  --accent-primary-rgb:     154, 217, 74;
+  --accent-secondary:       #7FBE35;
+  --accent-secondary-rgb:   127, 190, 53;
+  --accent-deep:            #5EA028;
+  --accent-deep-rgb:        94, 160, 40;
+  --accent-highlight:       #B5E96E;
+  --accent-highlight-rgb:   181, 233, 110;
+
+  /* ─── Glow System ──────────────────────────────────────── */
+  --glow-soft:   rgba(154, 217, 74, 0.15);
+  --glow-medium: rgba(154, 217, 74, 0.30);
+  --glow-hero:   rgba(181, 233, 110, 0.40);
+
+  /* ─── Warm Atmosphere (retained for cinematic depth) ──── */
+  /* ~10-15% warmth in ambient particles, hero glow, streaks */
+  --warm-atmosphere-rgb: 200, 165, 60;
+
+  /* ─── Surface System ───────────────────────────────────── */
+  --surface-primary:   rgba(12, 12, 12, 0.88);
+  --surface-elevated:  rgba(12, 18, 14, 0.92);
+  --surface-hover:     rgba(10, 20, 14, 0.94);
+  --surface-glass:     rgba(10, 10, 10, 0.85);
+
+  /* ─── Border System ────────────────────────────────────── */
+  --border-primary:  rgba(26, 26, 26, 1);
+  --border-subtle:   rgba(26, 26, 26, 0.6);
+  --border-accent:   rgba(154, 217, 74, 0.12);
+
+  /* ─── Node Network — State Colors ──────────────────────── */
+  /* Idle nodes use neutral gray; hover/active use accent */
+  --node-idle-rgb:    100, 100, 100;
+  --node-active-rgb:  154, 217, 74;
+  --node-bright-rgb:  181, 233, 110;
+}

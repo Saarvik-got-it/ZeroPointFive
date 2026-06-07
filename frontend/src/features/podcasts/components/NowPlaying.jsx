@@ -54,9 +54,9 @@ export default function NowPlaying({ track, onClose }) {
     ctx.scale(dpr, dpr);
 
     const layers = [
-      { freq: 2.4, amp: 5,   phase: 0,    color: 'rgba(239,170,52,0.8)',  line: 1.8, glow: 4 },
-      { freq: 3.2, amp: 3.5, phase: 1.2,  color: 'rgba(239,170,52,0.3)',  line: 1.4, glow: 3 },
-      { freq: 1.8, amp: 2.5, phase: 2.5,  color: 'rgba(229,140,43,0.15)', line: 1.5, glow: 0 },
+      { freq: 2.4, amp: 5,   phase: 0,    color: 'rgba(245,245,245,0.7)',  line: 1.8, glow: 4 },
+      { freq: 3.2, amp: 3.5, phase: 1.2,  color: 'rgba(154,217,74,0.35)',  line: 1.4, glow: 3 },
+      { freq: 1.8, amp: 2.5, phase: 2.5,  color: 'rgba(154,217,74,0.12)', line: 1.5, glow: 0 },
     ];
 
     let t = 0;

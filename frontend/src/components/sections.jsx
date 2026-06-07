@@ -51,7 +51,7 @@ function HomePage({ onNavigate }) {
           width: 480,
           height: 480,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(229, 169, 60, 0.043) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(200, 165, 60, 0.035) 0%, transparent 70%)',
           transform: 'translate(-50%, -50%)',
           left: '70vw',
           top: '55vh',
@@ -220,7 +220,7 @@ function Hero({ onNavigate }) {
         const alpha = particle.opacity * (0.65 + 0.35 * Math.sin(particle.pulse));
         context.beginPath();
         context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        context.fillStyle = particle.warm ? `rgba(229,140,43,${alpha})` : `rgba(255,255,255,${alpha * 0.5})`;
+        context.fillStyle = particle.warm ? `rgba(200,165,60,${alpha})` : `rgba(255,255,255,${alpha * 0.5})`;
         context.fill();
       });
 
@@ -233,7 +233,7 @@ function Hero({ onNavigate }) {
             context.beginPath();
             context.moveTo(particles[i].x, particles[i].y);
             context.lineTo(particles[j].x, particles[j].y);
-            context.strokeStyle = `rgba(229,140,43,${0.045 * (1 - distance / 100)})`;
+            context.strokeStyle = `rgba(200,165,60,${0.045 * (1 - distance / 100)})`;
             context.lineWidth = 0.5;
             context.stroke();
           }
@@ -300,7 +300,7 @@ function Hero({ onNavigate }) {
         <span className="font-mono text-[10px] tracking-widest uppercase">Scroll</span>
         <ChevronDownIcon className="h-4 w-4" />
       </button>
-      <div className="absolute bottom-0 left-0 right-0 h-px" aria-hidden="true" style={{ background: 'linear-gradient(to right, transparent, rgba(229,169,60,0.25), transparent)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-px" aria-hidden="true" style={{ background: 'linear-gradient(to right, transparent, rgba(154,217,74,0.18), transparent)' }} />
     </section>
   );
 }
@@ -354,7 +354,7 @@ function EpisodeCard({ episode, index }) {
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgb(5,5,5) 20%, transparent 70%)' }} />
       </div>
       <div className="absolute top-5 left-5 z-10">
-        <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-1" style={{ color: 'rgb(239, 170, 52)', border: '1px solid rgba(239, 170, 52, 0.4)' }}>
+        <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-1" style={{ color: 'rgb(154, 217, 74)', border: '1px solid rgba(154, 217, 74, 0.35)' }}>
           {episode.tag}
         </span>
       </div>
@@ -371,7 +371,7 @@ function EpisodeCard({ episode, index }) {
           <h3 className="font-serif text-xl mb-2 leading-snug text-balance" style={{ color: 'rgb(242, 242, 242)' }}>
             {episode.title}
           </h3>
-          <p className="text-sm font-medium" style={{ color: 'rgb(239, 170, 52)' }}>
+          <p className="text-sm font-medium" style={{ color: 'rgb(154, 217, 74)' }}>
             {episode.guest}
           </p>
         </div>
@@ -382,7 +382,7 @@ function EpisodeCard({ episode, index }) {
               <span>·</span>
               <span>{episode.plays} plays</span>
             </div>
-            <button className="flex items-center justify-center w-9 h-9 border transition-all duration-300" style={{ borderColor: 'rgb(239, 170, 52)', color: 'rgb(239, 170, 52)' }}>
+            <button className="flex items-center justify-center w-9 h-9 border transition-all duration-300" style={{ borderColor: 'rgb(154, 217, 74)', color: 'rgb(154, 217, 74)' }}>
               <PlayIcon className="h-3.5 w-3.5 fill-current" />
             </button>
           </div>
@@ -431,19 +431,19 @@ function GuestCard({ guest, index }) {
           # {guest.number}
         </span>
       </div>
-      <div className="absolute top-4 right-4 z-10 rounded-full" style={{ width: 6, height: 6, background: 'rgb(239, 170, 52)', opacity: hovered ? 1 : 0, transform: hovered ? 'scale(1)' : 'scale(0.4)', transition: 'opacity 0.3s ease, transform 0.3s ease' }} />
+      <div className="absolute top-4 right-4 z-10 rounded-full" style={{ width: 6, height: 6, background: 'rgb(154, 217, 74)', opacity: hovered ? 1 : 0, transform: hovered ? 'scale(1)' : 'scale(0.4)', transition: 'opacity 0.3s ease, transform 0.3s ease' }} />
       <div className="absolute bottom-0 left-0 right-0 z-10 p-5">
         <h3 className="font-serif leading-tight mb-1 text-balance" style={{ color: 'rgb(240, 240, 240)', opacity: hovered ? 1 : 0.25, transform: hovered ? 'translateY(0)' : 'translateY(8px)', fontSize: hovered ? '1.4rem' : '1.1rem', transition: 'opacity 0.45s ease, transform 0.45s ease, font-size 0.45s ease' }}>
           {guest.company}
         </h3>
-        <p className="font-medium text-sm mb-1" style={{ color: 'rgb(239, 170, 52)', opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 0.4s ease, transform 0.4s ease' }}>
+        <p className="font-medium text-sm mb-1" style={{ color: 'rgb(154, 217, 74)', opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 0.4s ease, transform 0.4s ease' }}>
           {guest.name}
         </p>
         <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'rgb(102, 102, 102)', opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(4px)', transition: 'opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s' }}>
           {guest.role}
         </p>
       </div>
-      <div className="absolute inset-0 pointer-events-none" style={{ border: '1px solid transparent', boxShadow: hovered ? 'inset 0 0 40px rgba(239, 170, 52, 0.05)' : 'none', transition: 'box-shadow 0.4s ease, border-color 0.4s ease', borderColor: hovered ? 'rgba(239, 170, 52, 0.25)' : 'transparent' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ border: '1px solid transparent', boxShadow: hovered ? 'inset 0 0 40px rgba(154, 217, 74, 0.04)' : 'none', transition: 'box-shadow 0.4s ease, border-color 0.4s ease', borderColor: hovered ? 'rgba(154, 217, 74, 0.2)' : 'transparent' }} />
     </div>
   );
 }
@@ -514,7 +514,7 @@ function JourneySection() {
       </div>
       <div ref={trackRef} className="relative max-w-2xl">
         <div className="absolute top-0 bottom-0 w-px" style={{ left: 11, background: 'rgb(26, 26, 26)' }} />
-        <div ref={lineRef} className="absolute top-0 w-px origin-top" style={{ left: 11, height: '0%', background: 'rgb(239, 170, 52)', boxShadow: '0 0 8px rgba(239, 170, 52, 0.5)', transition: 'height 0.1s linear' }} />
+        <div ref={lineRef} className="absolute top-0 w-px origin-top" style={{ left: 11, height: '0%', background: 'rgb(154, 217, 74)', boxShadow: '0 0 8px rgba(154, 217, 74, 0.5)', transition: 'height 0.1s linear' }} />
         <div className="flex flex-col gap-12">
           {journey.map((item, index) => (
             <TimelineItem key={item.year} item={item} index={index} />
@@ -531,7 +531,7 @@ function TimelineItem({ item, index }) {
 
   return (
     <div ref={ref} className="pl-10 relative" style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'none' : 'translateX(-20px)', transition: `opacity 0.8s ease ${index * 0.05}s, transform 0.8s ease ${index * 0.05}s` }}>
-      <div className="absolute left-0 top-1" style={{ width: 11, height: 11, border: '1px solid rgb(239, 170, 52)', background: '#050505', boxShadow: isVisible ? '0 0 12px rgba(239, 170, 52, 0.4)' : 'none', transform: isVisible ? 'scale(1)' : 'scale(0)', transition: 'transform 0.4s ease, box-shadow 0.4s ease' }} />
+      <div className="absolute left-0 top-1" style={{ width: 11, height: 11, border: '1px solid rgb(154, 217, 74)', background: '#050505', boxShadow: isVisible ? '0 0 12px rgba(154, 217, 74, 0.4)' : 'none', transform: isVisible ? 'scale(1)' : 'scale(0)', transition: 'transform 0.4s ease, box-shadow 0.4s ease' }} />
       <span className="font-mono text-[11px] tracking-widest amber-text mb-2 block">{item.year}</span>
       <h3 className="font-serif text-xl mb-2" style={{ color: 'rgb(235, 235, 235)' }}>
         {item.title}
@@ -696,7 +696,7 @@ function PartnersSection() {
           {partners.map((partner) => (
             <div key={partner} className="group cursor-default">
               <p className="font-mono text-sm tracking-widest uppercase font-medium transition-colors duration-300" style={{ color: 'rgb(56, 56, 56)' }} onMouseEnter={(event) => {
-                event.currentTarget.style.color = 'rgb(239, 170, 52)';
+                event.currentTarget.style.color = 'rgb(154, 217, 74)';
               }} onMouseLeave={(event) => {
                 event.currentTarget.style.color = 'rgb(56, 56, 56)';
               }}>
@@ -722,28 +722,28 @@ function Footer() {
         </div>
         <div className="flex items-center gap-6">
           <a href="https://youtube.com/@ZeroPointFiveShow" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-colors duration-300" style={{ color: 'rgb(77, 77, 77)' }} onMouseEnter={(event) => {
-            event.currentTarget.style.color = 'rgb(239, 170, 52)';
+            event.currentTarget.style.color = 'rgb(154, 217, 74)';
           }} onMouseLeave={(event) => {
             event.currentTarget.style.color = 'rgb(77, 77, 77)';
           }}>
             <YouTubeIcon className="w-4 h-4" />
           </a>
           <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" aria-label="Spotify" className="transition-colors duration-300" style={{ color: 'rgb(77, 77, 77)' }} onMouseEnter={(event) => {
-            event.currentTarget.style.color = 'rgb(239, 170, 52)';
+            event.currentTarget.style.color = 'rgb(154, 217, 74)';
           }} onMouseLeave={(event) => {
             event.currentTarget.style.color = 'rgb(77, 77, 77)';
           }}>
             <SpotifyIcon className="w-4 h-4" />
           </a>
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-colors duration-300" style={{ color: 'rgb(77, 77, 77)' }} onMouseEnter={(event) => {
-            event.currentTarget.style.color = 'rgb(239, 170, 52)';
+            event.currentTarget.style.color = 'rgb(154, 217, 74)';
           }} onMouseLeave={(event) => {
             event.currentTarget.style.color = 'rgb(77, 77, 77)';
           }}>
             <InstagramIcon className="w-4 h-4" />
           </a>
           <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors duration-300" style={{ color: 'rgb(77, 77, 77)' }} onMouseEnter={(event) => {
-            event.currentTarget.style.color = 'rgb(239, 170, 52)';
+            event.currentTarget.style.color = 'rgb(154, 217, 74)';
           }} onMouseLeave={(event) => {
             event.currentTarget.style.color = 'rgb(77, 77, 77)' ;
           }}>

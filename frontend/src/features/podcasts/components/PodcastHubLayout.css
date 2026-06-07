@@ -11,21 +11,21 @@
 .podcast-hub {
   --hub-bg: #050505;
   --hub-surface: rgba(12, 12, 12, 0.88);
-  --hub-surface-elevated: rgba(18, 16, 12, 0.92);
-  --hub-surface-hover: rgba(25, 20, 10, 0.94);
+  --hub-surface-elevated: rgba(12, 18, 14, 0.92);
+  --hub-surface-hover: rgba(10, 20, 14, 0.94);
   --hub-border: rgba(26, 26, 26, 1);
   --hub-border-subtle: rgba(26, 26, 26, 0.6);
-  --hub-amber: #efaa34;
-  --hub-amber-rgb: 239, 170, 52;
-  --hub-warm-amber-rgb: 229, 140, 43;
-  --hub-burnt-orange: #c4782a;
+  --hub-amber: #9AD94A;
+  --hub-amber-rgb: 154, 217, 74;
+  --hub-warm-amber-rgb: 200, 165, 60;
+  --hub-burnt-orange: #5EA028;
   --hub-text-primary: rgb(245, 245, 245);
   --hub-text-secondary: rgb(138, 138, 138);
   --hub-text-tertiary: rgb(97, 97, 97);
   --hub-text-dim: rgb(71, 71, 71);
-  --hub-champagne: rgba(255, 248, 230, 0.06);
+  --hub-champagne: rgba(200, 255, 220, 0.04);
   --hub-glass: rgba(10, 10, 10, 0.85);
-  --hub-glass-border: rgba(239, 170, 52, 0.12);
+  --hub-glass-border: rgba(154, 217, 74, 0.10);
   --hub-radius: 2px;
   --hub-radius-lg: 4px;
   --hub-font-mono: 'Space Mono', 'SF Mono', 'Fira Code', monospace;
@@ -1197,8 +1197,8 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(
     ellipse at center,
-    rgba(239, 170, 52, 0.05) 0%,
-    rgba(239, 170, 52, 0.02) 40%,
+    rgba(154, 217, 74, 0.04) 0%,
+    rgba(154, 217, 74, 0.015) 40%,
     transparent 70%
   );
   pointer-events: none;

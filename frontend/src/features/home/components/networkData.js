@@ -10,18 +10,20 @@ export const NODE_TYPES = {
 
 // ─── Color tokens (matching site theme) ──────
 export const COLORS = {
-  amber: '#efaa34',
-  amberRgb: '239, 170, 52',
-  warmAmber: '229, 140, 43',
+  amber: '#9AD94A',
+  amberRgb: '154, 217, 74',
+  warmAmber: '200, 165, 60',
+  idleRgb: '100, 100, 100',
+  brightRgb: '181, 233, 110',
   white: '245, 245, 245',
   midGray: '140, 140, 140',
   dimGray: '80, 80, 80',
   darkGray: '40, 40, 40',
   bg: '#050505',
   nodeFill: 'rgba(12, 12, 12, 0.88)',
-  nodeFillHover: 'rgba(25, 20, 10, 0.94)',
+  nodeFillHover: 'rgba(10, 20, 14, 0.94)',
   pillBg: 'rgba(14, 14, 14, 0.85)',
-  pillBorder: 'rgba(239, 170, 52, 0.12)',
+  pillBorder: 'rgba(154, 217, 74, 0.12)',
 };
 
 // ─── Primary Nodes (Large) ───────────────────

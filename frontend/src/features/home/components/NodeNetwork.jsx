@@ -285,7 +285,7 @@ function drawNodeCircle(ctx, proj, isHovered, hoverProgress, isNeighborHovered, 
     ctx.save();
     ctx.beginPath();
     ctx.arc(x, y, r + glowR, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${COLORS.amberRgb}, ${glowAlpha})`;
+    ctx.fillStyle = `rgba(${isHovered || isNeighborHovered ? COLORS.amberRgb : COLORS.idleRgb}, ${glowAlpha})`;
     ctx.fill();
     ctx.restore();
   }
@@ -340,13 +340,13 @@ function drawNodeCircle(ctx, proj, isHovered, hoverProgress, isNeighborHovered, 
 
   // Border
   const borderAlpha = isHovered ? 0.85 : isNeighborHovered ? 0.55 : alpha * 0.35;
-  ctx.strokeStyle = `rgba(${COLORS.amberRgb}, ${borderAlpha})`;
+  ctx.strokeStyle = `rgba(${isHovered ? COLORS.brightRgb : isNeighborHovered ? COLORS.amberRgb : COLORS.idleRgb}, ${borderAlpha})`;
   ctx.lineWidth = isHovered ? 2 : isNeighborHovered ? 1.5 : 1;
   if (isHovered) {
-    ctx.shadowColor = `rgba(${COLORS.amberRgb}, 0.6)`;
+    ctx.shadowColor = `rgba(${COLORS.brightRgb}, 0.6)`;
     ctx.shadowBlur = 18;
   } else if (isNeighborHovered) {
-    ctx.shadowColor = `rgba(${COLORS.amberRgb}, 0.2)`;
+    ctx.shadowColor = `rgba(${COLORS.amberRgb}, 0.25)`;
     ctx.shadowBlur = 8;
   }
   ctx.stroke();
@@ -355,7 +355,7 @@ function drawNodeCircle(ctx, proj, isHovered, hoverProgress, isNeighborHovered, 
   // ── Icon ──
   if (icon && iconDrawers[icon]) {
     const iconAlpha = isHovered ? 1 : isNeighborHovered ? 0.85 : alpha * 0.65;
-    const iconColor = `rgba(${COLORS.amberRgb}, ${iconAlpha})`;
+    const iconColor = `rgba(${isHovered ? COLORS.brightRgb : isNeighborHovered ? COLORS.amberRgb : COLORS.idleRgb}, ${iconAlpha})`;
     ctx.save();
     ctx.globalAlpha = clamp(iconAlpha, 0, 1);
     iconDrawers[icon](ctx, x, y, r, iconColor);
@@ -391,7 +391,7 @@ function drawLabel(ctx, x, y, text, fontSize, alpha, isHovered, isNeighborHovere
   ctx.beginPath();
   ctx.roundRect(pillX, pillY, pillW, pillH, cornerR);
   ctx.fillStyle = isHovered
-    ? `rgba(20, 16, 8, ${alpha * 0.92})`
+    ? `rgba(10, 18, 12, ${alpha * 0.92})`
     : `rgba(14, 14, 14, ${alpha * 0.85})`;
   ctx.fill();
 
@@ -407,7 +407,7 @@ function drawLabel(ctx, x, y, text, fontSize, alpha, isHovered, isNeighborHovere
 
   // Text
   ctx.fillStyle = isHovered
-    ? `rgba(${COLORS.amberRgb}, ${alpha})`
+    ? `rgba(${COLORS.brightRgb}, ${alpha})`
     : isNeighborHovered
       ? `rgba(${COLORS.amberRgb}, ${alpha * 0.8})`
       : `rgba(${COLORS.white}, ${alpha * 0.85})`;

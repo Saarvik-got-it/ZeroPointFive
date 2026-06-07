@@ -15,7 +15,7 @@ const TRAILS = [
   { y: 0.90, speed: 0.5,  amp: 10, lineW: 1.1, opacity: 0.40, pattern: 'pulse' },
 ];
 
-const AMBER = [239, 170, 52];
+const AMBER = [154, 217, 74];
 
 export default function HeroWaveTrails() {
   const canvasRef = useRef(null);
@@ -103,7 +103,7 @@ function drawTrail(ctx, w, h, baseY, time, trail) {
 
   // Hot core pass (very thin, brighter)
   ctx.beginPath();
-  ctx.strokeStyle = `rgba(255,220,160,${opacity * 0.4})`;
+  ctx.strokeStyle = `rgba(220,255,200,${opacity * 0.35})`;
   ctx.lineWidth = Math.max(0.5, lineW * 0.4);
   tracePath(ctx, w, baseY, amp, scrollOffset, pattern);
   ctx.stroke();

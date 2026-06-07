@@ -69,8 +69,8 @@ export function AmbientCanvas() {
         const r = orb.radius * Math.min(w, h);
 
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        grad.addColorStop(0, `rgba(229, 140, 43, ${breathe})`);
-        grad.addColorStop(1, 'rgba(229, 140, 43, 0)');
+        grad.addColorStop(0, `rgba(200, 165, 60, ${breathe})`);
+        grad.addColorStop(1, 'rgba(200, 165, 60, 0)');
 
         ctx.fillStyle = grad;
         ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
@@ -94,7 +94,7 @@ export function AmbientCanvas() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(229, 140, 43, ${alpha})`;
+        ctx.fillStyle = `rgba(200, 165, 60, ${alpha})`;
         ctx.fill();
       }
 
