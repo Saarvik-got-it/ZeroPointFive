@@ -6,7 +6,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "process-video": "node scripts/processEpisode.js",
-    "regenerate-video": "node scripts/regenerateEpisode.js"
+    "regenerate-video": "node scripts/regenerateEpisode.js",
+    "regenerate-transcript": "node scripts/regenerateTranscript.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

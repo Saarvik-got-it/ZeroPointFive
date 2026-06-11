@@ -44,3 +44,20 @@ frontend/dist/
 backend/node_modules/
 backend/.env
 
+# Local transcription & model weight cache
+backend/models/
+backend/models/huggingface/
+backend/models/whisper/
+backend/temp/
+backend/temp/audio/
+
+# Python cache & virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+

@@ -38,7 +38,14 @@ Abstracts the storage layer. Currently implementing local JSON storage, making i
 #### 2. Transcript Providers
 
 Located in `backend/src/services/transcript/`.
-Follows the Strategy Pattern. `index.js` defines the `defaultProvider`. `youtube.provider.js` implements the fetching using `youtube-transcript`. Future providers (Whisper, AssemblyAI) can be swapped seamlessly.
+Follows the Strategy Pattern to isolate the transcription layer.
+* `index.js`: Dynamically loads the selected provider (Whisper or YouTube) based on environment configurations, and implements automatic fallback strategy.
+* `provider.js`: Base abstract class defining the provider interface contract.
+* `youtube.provider.js`: Scrapes auto-generated captions directly from YouTube.
+* `whisper.provider.js` & `whisper_transcribe.py`: Integrates `faster-whisper` locally using Whisper Large v3 for verbatim Hinglish transcription. Automatically detects GPU/CPU hardware and handles fallback.
+* `audio-downloader.js`: Handles extraction and downloading of audio streams from YouTube URLs using `yt-dlp` to a temporary directory in the workspace.
+
+All model downloads are stored inside the project folder (`backend/models/`) rather than system user cache folders. This is controlled via env variables like `WHISPER_MODEL_DIR`, `HF_HOME`, and `TRANSFORMERS_CACHE`.
 
 #### 3. Gemini Pipeline
 

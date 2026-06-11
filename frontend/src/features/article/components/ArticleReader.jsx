@@ -203,7 +203,7 @@ export default function ArticleReader({ article }) {
             )}
 
             {/* Editorial Blocks */}
-            <div className="space-y-12 max-w-2xl">
+            <div className="space-y-12 w-full">
               {article.sections?.map((block, idx) => {
                 if (block.type === 'text') {
                   return (
@@ -230,7 +230,7 @@ export default function ArticleReader({ article }) {
                   return (
                     <div 
                       key={idx}
-                      className="bg-white/[0.02] border-l-4 border-emerald-500/60 p-6 rounded-r-2xl my-6"
+                      className="bg-white/[0.02] border-l-4 border-emerald-500/60 p-6 rounded-r-2xl my-6 max-w-2xl"
                     >
                       <h4 className="text-xs font-semibold tracking-widest uppercase text-emerald-400 mb-2">Deep Insight</h4>
                       <p className="text-lg text-slate-200 font-medium leading-relaxed italic">
@@ -242,7 +242,7 @@ export default function ArticleReader({ article }) {
                   return (
                     <div 
                       key={idx}
-                      className="my-10 p-6 sm:p-8 rounded-3xl bg-[#0f0f11] border border-white/5 relative"
+                      className="my-10 p-6 sm:p-8 rounded-3xl bg-[#0f0f11] border border-white/5 relative max-w-2xl"
                     >
                       <Quote className="absolute top-4 left-4 w-12 h-12 text-emerald-500/10 pointer-events-none" />
                       <blockquote className="text-xl sm:text-2xl font-serif italic text-white leading-relaxed relative z-10 mb-4">

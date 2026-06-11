@@ -11,6 +11,7 @@ INSTRUCTIONS:
 ARTICLE DESIGN & QUALITY PRINCIPLES:
 - The articles must read like a premium, professionally written long-form editorial from publications like Medium or Substack.
 - Each article MUST be at least 1200–1800 words (aim for 1500+ words) with substantial depth, narrative flow, and analytical rigor. Avoid generic AI writing, repetition, and walls of text.
+- Write text paragraphs that flow naturally in a full-width column editorial layout. Avoid formatting short line breaks or artificially narrow sentence-wrapping inside the text block string itself, letting the text span to container boundaries.
 - Do NOT generate articles as a single content string. Conforming strictly to the structure below.
 - Generate dynamic visual content blocks under the 'sections' property of the article. Vary block types between:
   - "text": for detailed narrative analysis (must have a heading, a slugified anchorId, and content with paragraphs separated by newlines).

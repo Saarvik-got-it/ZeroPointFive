@@ -9,7 +9,9 @@ if (!slug) {
 }
 
 regenerateVideo(slug)
-  .then(() => process.exit(0))
+  .then(() => {
+    process.exitCode = 0;
+  })
   .catch((err) => {
     console.error("Unhandled Script Error:", err);
     process.exit(1);

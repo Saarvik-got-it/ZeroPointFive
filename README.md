@@ -23,7 +23,26 @@ Make sure you have Node >18.x installed.
 2. `npm install`
 3. Run site: `npm run dev`
 
-## Content Pipeline (Adding a new video)
+### Local Whisper Transcription Setup (Optional / Highly Recommended)
+To transcribe videos locally using Whisper Large v3 (improving accuracy for Hinglish/multilingual episodes):
+
+1. **Prerequisites**: Ensure you have Python >= 3.9 (e.g. 3.12) and `ffmpeg` installed and available in your system `PATH`.
+2. **Install Python Packages**: In your terminal, run:
+   ```bash
+   pip install yt-dlp faster-whisper
+   ```
+3. **Configure Environment**: Set the following variables in your `backend/.env` file:
+   ```env
+   TRANSCRIPT_PROVIDER=whisper
+   TRANSCRIPT_FALLBACK=youtube
+   WHISPER_MODEL=large-v3
+   WHISPER_MODEL_DIR=./backend/models/whisper
+   HF_HOME=./backend/models/huggingface
+   TRANSFORMERS_CACHE=./backend/models/huggingface
+   ```
+   *Note: Model downloads (approx. 3GB) will automatically be saved into the project's `backend/models/` folder instead of your C:\ drive system folders. This folder is ignored in Git.*
+
+## Content Pipeline (Adding/Updating a video)
 
 To ingest a new podcast into the system:
 
@@ -32,12 +51,18 @@ To ingest a new podcast into the system:
    ```bash
    npm run process-video "<YOUTUBE_URL>"
    ```
-   This will fetch the transcript, run it through Gemini, create the structured JSON data in `backend/data/episodes/<slug>.json`, and immediately make it available on the frontend.
+   This will download the audio (if using Whisper), transcribe, generate the articles through Gemini, and write the structured JSON dataset in `backend/data/episodes/<slug>.json`.
 
-To tweak the AI prompt or regenerate an existing transcription's AI payload (saves fetching texts):
+To regenerate the articles and AI summaries reusing the cached transcript (faster, avoids re-transcribing):
 
 ```bash
 npm run regenerate-video "<existing-episode-slug>"
+```
+
+To force a full re-transcription with Whisper (deletes cached transcript and re-transcribes audio from scratch):
+
+```bash
+npm run regenerate-transcript "<existing-episode-slug>"
 ```
 
 ## Future Automation
