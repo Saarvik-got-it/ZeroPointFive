@@ -12,27 +12,44 @@ Currently running on:
 - Express (Node.js) for backend Services & APIs
 - Vite (React, React Router) + Tailwind CSS for frontend
 
-### Data Flow
+### Data Flow & Rendering Modes
 
 ```mermaid
 graph TD
-    A[YouTube URL] --> B(Ingest Script)
-    B --> C[YouTube Service Metadata]
-    B --> D[Transcript Provider]
-    C --> E[Gemini AI Service]
-    D --> E
-    E --> F[Structured Episode JSON]
-    F --> G[(Episode Repository - JSON/Cache)]
-    H[React Client] --> I(Express API /api/episodes/:slug)
-    I --> G
-    I -.-> H
+    subgraph Ingestion Pipeline (Backend)
+        A[YouTube URL] --> B(Ingest Script)
+        B --> C[YouTube Service Metadata]
+        B --> D[Transcript Provider]
+        C --> E[Gemini AI Service]
+        D --> E
+        E --> F[Structured Episode JSON]
+        F --> G[(Backend Episode Repository - JSON)]
+    end
+
+    subgraph Sync Layer
+        G --> Sync(Sync Script)
+        Meta[(Episode Metadata Config)] --> Sync
+    end
+
+    subgraph Client Rendering (Frontend)
+        Sync --> StaticFolder[(Static JSON Files)]
+        H[React Client] --> CR{ContentRepository}
+        CR -->|VITE_DATA_SOURCE=api| ExpressAPI[Express API /api/episodes]
+        CR -->|VITE_DATA_SOURCE=static| StaticRepo[StaticContentRepository]
+        ExpressAPI --> G
+        StaticRepo --> StaticFolder
+    end
 ```
 
 ### Module Breakdown
 
-#### 1. Episode Repository
+#### 1. Content Repositories & Data Source Abstraction
 
-Located in `backend/src/repositories/episode.repository.js`.
+To support running the frontend completely offline/backendless for demos (Static Demo Mode) while retaining the active backend (API Mode), the client data-fetching logic is decoupled using a Repository pattern:
+- **`ContentRepository.js`**: Unified entry point for the frontend, exporting either `StaticContentRepository` or `ApiContentRepository` based on the environment variable `VITE_DATA_SOURCE`.
+- **`StaticContentRepository.js`**: Resolves episodes dynamically using Vite's eager glob imports (`import.meta.glob('../data/episodes/*.json')`) and resolves articles using a pre-compiled index map to avoid duplication.
+- **`ApiContentRepository.js`**: Queries active REST backend routes and enriches payloads dynamically with metadata at runtime.
+- **`episode.repository.js`**: Backend-side filesystem repository that handles saving and retrieving raw ingested podcast data.
 Abstracts the storage layer. Currently implementing local JSON storage, making it future-proof for a MongoDB or PostgreSQL migration without touching the rest of the application.
 
 #### 2. Transcript Providers

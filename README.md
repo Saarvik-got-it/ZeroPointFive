@@ -21,7 +21,28 @@ Make sure you have Node >18.x installed.
 
 1. `cd frontend`
 2. `npm install`
-3. Run site: `npm run dev`
+3. Configure environment in `frontend/.env` (default is set to `VITE_DATA_SOURCE=static`).
+4. Run site: `npm run dev`
+
+### Static Demo Mode (Frontend-Only Deployments)
+
+For client demos where the backend is not hosted, the frontend can run independently in **Static Demo Mode**. It resolves all episodes, dynamic rails, transcripts, and articles from local static JSON files in the browser.
+
+#### Toggle the Data Source Mode
+Open [frontend/.env](file:///d:/ZeroPointFive/frontend/.env) and update the `VITE_DATA_SOURCE` variable:
+* `VITE_DATA_SOURCE=static` — Runs the frontend completely offline/serverless.
+* `VITE_DATA_SOURCE=api` — Queries a running Express backend (e.g., `http://localhost:5000`).
+
+#### Syncing Backend Content to Frontend Static Assets
+When new episodes are processed or metadata changes on the backend, you must compile and sync them to the frontend:
+```bash
+# Sync contents once
+npm run sync-demo-content
+
+# Start watch mode to continuously sync changes in backend/data/episodes/
+npm run sync-demo-content:watch
+```
+*Note: This script compiles metadata and outputs synced data to `frontend/src/data/episodes/` and maps dynamic article routing in `frontend/src/data/articleIndex.json`.*
 
 ### Local Whisper Transcription Setup (Optional / Highly Recommended)
 To transcribe videos locally using Whisper Large v3 (improving accuracy for Hinglish/multilingual episodes):

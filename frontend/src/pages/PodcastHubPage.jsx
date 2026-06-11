@@ -3,7 +3,7 @@
 // Hierarchy-first layout: hero → search → discovery.
 // ─────────────────────────────────────────────────────────
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // Layout & Ambient
@@ -20,17 +20,8 @@ import ConversationTrails from '@/features/podcasts/components/ConversationTrail
 import NowPlaying from '@/features/podcasts/components/NowPlaying';
 import IntelligencePulse from '@/features/podcasts/components/IntelligencePulse';
 
-// Data
-import {
-  continueExploring,
-  mostInfluential,
-  founderPicks,
-  trendingNow,
-  futureTech,
-  startupStories,
-  leadershipInsights,
-  unexpectedConversations,
-} from '@/features/podcasts/data/podcastsData';
+// Repository Selection
+import { ContentRepository } from '@/repositories/ContentRepository';
 
 export default function PodcastHubPage() {
   const [searchParams] = useSearchParams();
@@ -38,44 +29,92 @@ export default function PodcastHubPage() {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [nowPlayingTrack, setNowPlayingTrack] = useState(null);
 
+  const [episodes, setEpisodes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadEpisodes() {
+      try {
+        const data = await ContentRepository.getAllEpisodes();
+        setEpisodes(data);
+      } catch (err) {
+        console.error('[PodcastHub] Error fetching episodes:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadEpisodes();
+  }, []);
+
   const handlePlay = useCallback((episode) => {
     setNowPlayingTrack({
       title: episode.title,
-      guest: episode.guest,
+      guest: typeof episode.guest === 'string' ? episode.guest : (episode.guest?.name || ''),
       duration: episode.duration || '50:00',
-      image: episode.image,
+      image: typeof episode.image === 'string' ? episode.image : (episode.image || ''),
       isPlaying: true,
     });
   }, []);
 
-  // Filter helper
-  const matchesCategory = useCallback((episode) => {
-    if (activeCategory === 'all') return true;
-    return episode.category?.toLowerCase() === activeCategory.toLowerCase();
-  }, [activeCategory]);
+  // Filter episodes dynamically into rails based on active category and topics/metadata
+  const getRailEpisodes = useCallback((railId) => {
+    return episodes.filter(ep => {
+      // Category filter (CategoryPills selection)
+      if (activeCategory !== 'all') {
+        if (ep.category?.toLowerCase() !== activeCategory.toLowerCase()) {
+          return false;
+        }
+      }
 
-  const filterRail = useCallback((items) => {
-    if (activeCategory === 'all') return items;
-    const filtered = items.filter(matchesCategory);
-    return filtered.length >= 2 ? filtered : items;
-  }, [activeCategory, matchesCategory]);
+      const category = (ep.category || '').toLowerCase();
+      const topics = (ep.topics || []).map(t => t.toLowerCase());
+
+      switch (railId) {
+        case 'continue-exploring':
+          return true; // All episodes
+        case 'most-influential':
+          return category === 'startups' || category === 'business';
+        case 'founder-picks':
+          return category === 'leadership' || topics.includes('growth mindset');
+        case 'trending':
+          return category === 'business' || topics.includes('healthy snacking') || topics.includes('career gaps');
+        case 'future-tech':
+          return category === 'future' || category === 'technology' || category === 'ai' || topics.includes('ai') || topics.includes('technology');
+        case 'startup-stories':
+          return category === 'startups' || topics.includes('startup journey') || topics.includes('entrepreneurship');
+        case 'leadership-insights':
+          return category === 'leadership' || topics.includes('leadership') || topics.includes('women empowerment') || topics.includes('overcoming adversity');
+        case 'unexpected':
+          return topics.includes('personal branding') || topics.includes('consumer behavior');
+        default:
+          return false;
+      }
+    });
+  }, [episodes, activeCategory]);
 
   const isPlaying = !!nowPlayingTrack?.isPlaying;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  // Use the latest dynamic episode as featured, or fall back to mock featuredEpisode inside component
+  const featured = episodes.length > 0 ? episodes[0] : null;
 
   return (
     <PodcastHubLayout>
       <AmbientCanvas />
 
-      {/* ═══ V2 HERO ZONE ═══
-          Featured conversation dominates the viewport.
-          Search + categories are compressed below, not above. */}
-
-      {/* Section 1: Featured Conversation — FIRST THING the eye sees */}
+      {/* ═══ V2 HERO ZONE ═══ */}
       <div className="hub-section hub-section--first" style={{ paddingBottom: '1rem' }}>
-        <FeaturedConversation onPlay={handlePlay} />
+        <FeaturedConversation episode={featured} onPlay={handlePlay} />
       </div>
 
-      {/* Section 2: Search + Categories — integrated, compressed */}
+      {/* Section 2: Search + Categories */}
       <div className="hub-hero-zone">
         <div className="hub-section" style={{ paddingTop: '1rem', paddingBottom: '0.5rem' }}>
           <DiscoverySearch />
@@ -91,64 +130,80 @@ export default function PodcastHubPage() {
       <div className="hub-section__divider" />
 
       {/* Section 3: Content Rails */}
-      <ContentRail title="Continue Exploring" id="continue-exploring">
-        {filterRail(continueExploring).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('continue-exploring').length > 0 && (
+        <ContentRail title="Continue Exploring" id="continue-exploring">
+          {getRailEpisodes('continue-exploring').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
-      <ContentRail title="Most Influential" id="most-influential">
-        {filterRail(mostInfluential).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} variant="influential" index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
-
-      <div className="hub-section__divider" />
-
-      <ContentRail title="Founder Picks" id="founder-picks">
-        {filterRail(founderPicks).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
-
-      <ContentRail title="Trending Right Now" id="trending">
-        {filterRail(trendingNow).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} variant="trending" index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('most-influential').length > 0 && (
+        <ContentRail title="Most Influential" id="most-influential">
+          {getRailEpisodes('most-influential').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} variant="influential" index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
       <div className="hub-section__divider" />
 
-      {/* Section 4: Intelligence Pulse — the signature moment */}
+      {getRailEpisodes('founder-picks').length > 0 && (
+        <ContentRail title="Founder Picks" id="founder-picks">
+          {getRailEpisodes('founder-picks').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
+
+      {getRailEpisodes('trending').length > 0 && (
+        <ContentRail title="Trending Right Now" id="trending">
+          {getRailEpisodes('trending').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} variant="trending" index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
+
+      <div className="hub-section__divider" />
+
+      {/* Section 4: Intelligence Pulse */}
       <IntelligencePulse activeCategory={activeCategory} isPlaying={isPlaying} />
 
       <div className="hub-section__divider" />
 
-      <ContentRail title="Future Technologies" id="future-tech">
-        {filterRail(futureTech).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('future-tech').length > 0 && (
+        <ContentRail title="Future Technologies" id="future-tech">
+          {getRailEpisodes('future-tech').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
-      <ContentRail title="Startup Stories" id="startup-stories">
-        {filterRail(startupStories).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('startup-stories').length > 0 && (
+        <ContentRail title="Startup Stories" id="startup-stories">
+          {getRailEpisodes('startup-stories').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
       <div className="hub-section__divider" />
 
-      <ContentRail title="Leadership Insights" id="leadership-insights">
-        {filterRail(leadershipInsights).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('leadership-insights').length > 0 && (
+        <ContentRail title="Leadership Insights" id="leadership-insights">
+          {getRailEpisodes('leadership-insights').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
-      <ContentRail title="Unexpected Conversations" id="unexpected">
-        {filterRail(unexpectedConversations).map((ep, i) => (
-          <EpisodeCard key={ep.id} episode={ep} variant="surprise" index={i} onPlay={handlePlay} />
-        ))}
-      </ContentRail>
+      {getRailEpisodes('unexpected').length > 0 && (
+        <ContentRail title="Unexpected Conversations" id="unexpected">
+          {getRailEpisodes('unexpected').map((ep, i) => (
+            <EpisodeCard key={ep.id} episode={ep} variant="surprise" index={i} onPlay={handlePlay} />
+          ))}
+        </ContentRail>
+      )}
 
       <div className="hub-section__divider" />
 
@@ -158,7 +213,7 @@ export default function PodcastHubPage() {
       {/* Spacer for Now Playing bar */}
       <div style={{ height: '80px' }} />
 
-      {/* Section 6: Now Playing V2 */}
+      {/* Section 6: Now Playing */}
       <NowPlaying track={nowPlayingTrack} />
     </PodcastHubLayout>
   );

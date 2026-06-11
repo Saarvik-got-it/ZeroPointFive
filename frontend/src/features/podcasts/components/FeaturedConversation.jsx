@@ -9,7 +9,7 @@ import { motion } from 'motion/react';
 import { featuredEpisode } from '@/features/podcasts/data/podcastsData';
 import HeroWaveTrails from './HeroWaveTrails';
 
-export default function FeaturedConversation({ onPlay }) {
+export default function FeaturedConversation({ episode, onPlay }) {
   const cardRef = useRef(null);
   const [imageOffset, setImageOffset] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -28,8 +28,16 @@ export default function FeaturedConversation({ onPlay }) {
     setImageOffset({ x: 0, y: 0 });
   }, []);
 
+  const activeEpisode = episode || featuredEpisode;
   const { episodeNumber, title, guest, runtime, views, topics, category } =
-    featuredEpisode;
+    activeEpisode;
+
+  // Resolve properties that might be structured differently between dynamic JSON and mock objects
+  const guestName = typeof guest === "string" ? guest : (guest?.name || "");
+  const guestCompany = typeof guest === "string" ? (activeEpisode.company || "") : (guest?.company || "");
+  const guestRole = typeof guest === "string" ? (activeEpisode.role || "") : (guest?.role || "");
+  const guestImage = typeof guest === "string" ? (activeEpisode.image || "") : (guest?.image || "");
+  const displayRuntime = runtime || activeEpisode.duration || "45 min";
 
   return (
     <motion.div
@@ -54,8 +62,8 @@ export default function FeaturedConversation({ onPlay }) {
         <div className="featured-conv__image-wrapper">
           <img
             className="featured-conv__image"
-            src={guest.image}
-            alt={guest.name}
+            src={guestImage}
+            alt={guestName}
             loading="eager"
             style={{
               animationName: isHovered ? 'none' : undefined,
@@ -99,14 +107,14 @@ export default function FeaturedConversation({ onPlay }) {
 
           <h2 className="featured-conv__title">{title}</h2>
 
-          <div className="featured-conv__guest">{guest.name}</div>
+          <div className="featured-conv__guest">{guestName}</div>
           <div className="featured-conv__company">
-            {guest.role} · {guest.company}
+            {guestRole} · {guestCompany}
           </div>
 
           {/* Meta row */}
           <div className="featured-conv__meta">
-            <span>{runtime}</span>
+            <span>{displayRuntime}</span>
             <span className="featured-conv__meta-separator" />
             <span>{views} views</span>
             <span className="featured-conv__meta-separator" />
@@ -126,7 +134,7 @@ export default function FeaturedConversation({ onPlay }) {
           <div className="featured-conv__actions">
             <button
               className="featured-conv__btn featured-conv__btn--primary"
-              onClick={() => onPlay && onPlay({ title, guest: guest.name, duration: runtime, image: guest.image })}
+              onClick={() => onPlay && onPlay({ title, guest: guestName, duration: displayRuntime, image: guestImage })}
               aria-label="Listen to episode"
             >
               <svg

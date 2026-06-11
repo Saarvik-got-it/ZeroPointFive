@@ -7,6 +7,7 @@
 
 import { useRef } from 'react';
 import { useInView } from '@/hooks/useInView';
+import { useNavigate } from 'react-router-dom';
 import { hoverReveals } from '@/features/podcasts/data/podcastsData';
 
 export default function EpisodeCard({
@@ -17,6 +18,7 @@ export default function EpisodeCard({
 }) {
   const cardRef = useRef(null);
   const isVisible = useInView(cardRef, { once: true, margin: '-40px' });
+  const navigate = useNavigate();
 
   const {
     id,
@@ -34,8 +36,14 @@ export default function EpisodeCard({
     surprise,
   } = episode;
 
-  // V2: Hover depth data
-  const reveal = hoverReveals[id];
+  // V2: Hover depth data (use mock data, otherwise fall back to takeaways/topics dynamically)
+  const dbReveal = (episode.takeaways && episode.takeaways.length > 0)
+    ? {
+        quote: episode.takeaways[0],
+        topic: (episode.topics && episode.topics.length > 0) ? episode.topics[0] : (episode.category || 'General')
+      }
+    : null;
+  const reveal = hoverReveals[id] || dbReveal;
 
   const rootClass = [
     'episode-card',
@@ -44,11 +52,25 @@ export default function EpisodeCard({
     .filter(Boolean)
     .join(' ');
 
+  const handleCardClick = (e) => {
+    // Check if the click happened on the play button, progress bar, or play indicator
+    const isPlayClick = e.target.closest('.episode-card__play-indicator') || e.target.closest('.episode-card__progress');
+    if (isPlayClick) {
+      e.stopPropagation();
+      onPlay && onPlay(episode);
+    } else if (episode.slug) {
+      navigate(`/podcasts/${episode.slug}`);
+    } else {
+      // Mock cards play as usual
+      onPlay && onPlay(episode);
+    }
+  };
+
   return (
     <div
       ref={cardRef}
       className={rootClass}
-      onClick={() => onPlay && onPlay(episode)}
+      onClick={handleCardClick}
       role="article"
       aria-label={`Episode: ${title}`}
       style={{

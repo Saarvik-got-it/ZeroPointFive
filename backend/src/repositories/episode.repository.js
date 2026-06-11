@@ -22,7 +22,17 @@ class EpisodeRepository {
     const filePath = path.join(dataDir, `${slug}.json`);
     try {
       const data = await fs.readFile(filePath, "utf-8");
-      return JSON.parse(data);
+      const episode = JSON.parse(data);
+      if (episode && episode.articles && Array.isArray(episode.articles)) {
+        episode.articles = episode.articles.map((art) => ({
+          ...art,
+          source: {
+            ...art.source,
+            episodeSlug: slug,
+          },
+        }));
+      }
+      return episode;
     } catch (err) {
       if (err.code === "ENOENT") return null;
       throw err;
@@ -40,7 +50,17 @@ class EpisodeRepository {
       for (const file of files) {
         if (file.endsWith(".json")) {
           const content = await fs.readFile(path.join(dataDir, file), "utf-8");
-          episodes.push(JSON.parse(content));
+          const episode = JSON.parse(content);
+          if (episode && episode.articles && Array.isArray(episode.articles)) {
+            episode.articles = episode.articles.map((art) => ({
+              ...art,
+              source: {
+                ...art.source,
+                episodeSlug: episode.slug,
+              },
+            }));
+          }
+          episodes.push(episode);
         }
       }
       // Sort by createdAt descending

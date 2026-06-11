@@ -5,6 +5,7 @@ import EpisodeHero from '../features/episode/components/EpisodeHero';
 import ContentSection from '../features/episode/components/ContentSection';
 import ArticleCard from '../features/episode/components/ArticleCard';
 import TranscriptViewer from '../features/episode/components/TranscriptViewer';
+import { ContentRepository } from '@/repositories/ContentRepository';
 
 export default function EpisodeDetailPage() {
   const { slug } = useParams();
@@ -15,11 +16,11 @@ export default function EpisodeDetailPage() {
   useEffect(() => {
     async function fetchEpisode() {
       try {
-        const res = await fetch(`http://localhost:5000/api/episodes/${slug}`);
-        if (!res.ok) {
+        setLoading(true);
+        const data = await ContentRepository.getEpisodeBySlug(slug);
+        if (!data) {
           throw new Error('Episode not found');
         }
-        const data = await res.json();
         setEpisode(data);
       } catch (err) {
         setError(err.message);

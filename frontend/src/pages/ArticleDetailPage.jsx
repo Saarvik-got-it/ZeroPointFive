@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Beaker } from 'lucide-react';
 import ArticleReader from '../features/article/components/ArticleReader';
+import { ContentRepository } from '@/repositories/ContentRepository';
 
 export default function ArticleDetailPage() {
   const { slug } = useParams();
@@ -13,11 +14,10 @@ export default function ArticleDetailPage() {
     async function fetchArticle() {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/episodes/articles/${slug}`);
-        if (!res.ok) {
+        const data = await ContentRepository.getArticleBySlug(slug);
+        if (!data) {
           throw new Error('Article not found');
         }
-        const data = await res.json();
         setArticle(data);
       } catch (err) {
         setError(err.message);
