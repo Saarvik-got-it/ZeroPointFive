@@ -1,0 +1,64 @@
+/* ─────────────────────────────────────────────────────────
+ * ArticleReader.css — Premium Editorial Styles
+ * ───────────────────────────────────────────────────────── */
+
+/* Reading Width & Paragraph rhythm */
+.article-reader p.paragraph-text {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.8;
+  color: #d1d5db; /* text-slate-300 */
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.011em;
+  font-weight: 300;
+}
+
+/* Heading offsets and border designs */
+.article-reader h2 {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+/* Table of Contents highlights */
+.article-reader aside a {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.article-reader aside a:hover {
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Visual Block Quote Design */
+.article-reader blockquote {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* Key Takeaways block glow effects */
+.article-reader section {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-reader section:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.03);
+}
+
+/* Custom Scroll Lock and Fade-in Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.article-reader {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -1,0 +1,55 @@
+# The Zero Point Five - Architecture
+
+## System Architecture
+
+The project consists of two primary modules decoupled from each other:
+
+1. **Backend Pipeline (Data Ingestion)**
+2. **Frontend Client (Data Rendering)**
+
+Currently running on:
+
+- Express (Node.js) for backend Services & APIs
+- Vite (React, React Router) + Tailwind CSS for frontend
+
+### Data Flow
+
+```mermaid
+graph TD
+    A[YouTube URL] --> B(Ingest Script)
+    B --> C[YouTube Service Metadata]
+    B --> D[Transcript Provider]
+    C --> E[Gemini AI Service]
+    D --> E
+    E --> F[Structured Episode JSON]
+    F --> G[(Episode Repository - JSON/Cache)]
+    H[React Client] --> I(Express API /api/episodes/:slug)
+    I --> G
+    I -.-> H
+```
+
+### Module Breakdown
+
+#### 1. Episode Repository
+
+Located in `backend/src/repositories/episode.repository.js`.
+Abstracts the storage layer. Currently implementing local JSON storage, making it future-proof for a MongoDB or PostgreSQL migration without touching the rest of the application.
+
+#### 2. Transcript Providers
+
+Located in `backend/src/services/transcript/`.
+Follows the Strategy Pattern. `index.js` defines the `defaultProvider`. `youtube.provider.js` implements the fetching using `youtube-transcript`. Future providers (Whisper, AssemblyAI) can be swapped seamlessly.
+
+#### 3. Gemini Pipeline
+
+Located in `backend/src/services/ai/gemini.js`.
+Uses `gemini-1.5-flash` with a strict JSON schema configuration (`responseSchema`). It takes a full transcript and generates the complete structured episode (Summary, Takeaways, Topics, Articles) in a single request.
+
+#### 4. Frontend Routing
+
+Located in `frontend/src/app/router.jsx`. Uses `react-router-dom`. The new Episode detail view lives at `/podcasts/:slug`.
+
+### Automation Strategy
+
+This architecture natively supports CI/CD pipelines or cron jobs.
+Instead of calling the `processVideo(url)` function manually via the CLI, a webhook trigger (e.g., from YouTube pubsub) can invoke `processVideo(url)` on the server. The data will automatically land in the Episode Repository and become immediately available on the frontend without any rebuilds.
