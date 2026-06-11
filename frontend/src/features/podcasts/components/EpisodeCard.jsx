@@ -36,6 +36,8 @@ export default function EpisodeCard({
     surprise,
   } = episode;
 
+  const isYoutubeImage = typeof image === 'string' && (image.includes('ytimg.com') || image.includes('youtube.com'));
+
   // V2: Hover depth data (use mock data, otherwise fall back to takeaways/topics dynamically)
   const dbReveal = (episode.takeaways && episode.takeaways.length > 0)
     ? {
@@ -87,6 +89,7 @@ export default function EpisodeCard({
           src={image}
           alt={guest}
           loading="lazy"
+          style={isYoutubeImage ? { objectPosition: '80% center' } : undefined}
         />
         <div className="episode-card__overlay" />
 

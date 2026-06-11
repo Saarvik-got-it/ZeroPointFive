@@ -39,6 +39,8 @@ export default function FeaturedConversation({ episode, onPlay }) {
   const guestImage = typeof guest === "string" ? (activeEpisode.image || "") : (guest?.image || "");
   const displayRuntime = runtime || activeEpisode.duration || "45 min";
 
+  const isYoutubeImage = typeof guestImage === 'string' && (guestImage.includes('ytimg.com') || guestImage.includes('youtube.com'));
+
   return (
     <motion.div
       className="featured-conv"
@@ -70,6 +72,7 @@ export default function FeaturedConversation({ episode, onPlay }) {
               transform: isHovered
                 ? `translate(${imageOffset.x}px, ${imageOffset.y}px) scale(1.03)`
                 : undefined,
+              objectPosition: isYoutubeImage ? '80% center' : undefined,
             }}
           />
         </div>

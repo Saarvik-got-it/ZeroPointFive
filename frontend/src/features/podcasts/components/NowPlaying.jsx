@@ -113,7 +113,12 @@ export default function NowPlaying({ track, onClose }) {
             transition={{ type: 'spring', stiffness: 340, damping: 28 }}
           >
             <div className="now-playing__collapsed">
-              <img className="now-playing__thumb" src={data.image} alt={data.title} />
+              <img 
+                className="now-playing__thumb" 
+                src={data.image} 
+                alt={data.title} 
+                style={typeof data.image === 'string' && (data.image.includes('ytimg.com') || data.image.includes('youtube.com')) ? { objectPosition: '80% center', objectFit: 'cover' } : undefined}
+              />
 
               <div className="now-playing__info">
                 <div className="now-playing__track-title">{data.title}</div>

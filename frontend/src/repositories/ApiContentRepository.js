@@ -33,7 +33,7 @@ function enrichEpisode(ep, index) {
   let resolvedImage = ep.thumbnail;
   if (meta.image) {
     if (meta.image.startsWith("KLing_")) {
-      resolvedImage = asset(meta.image);
+      resolvedImage = ep.thumbnail;
     } else {
       resolvedImage = meta.image;
     }

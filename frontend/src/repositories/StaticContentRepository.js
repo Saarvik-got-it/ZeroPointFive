@@ -13,7 +13,7 @@ const episodes = rawEpisodes.map(ep => {
   let resolvedImage = ep.thumbnail;
   if (ep.image) {
     if (ep.image.startsWith("KLing_")) {
-      resolvedImage = asset(ep.image);
+      resolvedImage = ep.thumbnail;
     } else {
       resolvedImage = ep.image;
     }

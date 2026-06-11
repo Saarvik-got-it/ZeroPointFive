@@ -91,8 +91,8 @@ function runSync() {
       const guestCompany = meta.company || "ZeroPointFive";
       const guestRole = meta.role || "Guest";
 
-      // Determine Image
-      const guestImage = meta.image || ep.thumbnail;
+      // Determine Image: if meta image is a mock AI image (starts with KLing_), ignore it and use the video thumbnail instead
+      const guestImage = (meta.image && !meta.image.startsWith("KLing_")) ? meta.image : ep.thumbnail;
 
       // Determine Duration
       let duration = meta.duration;
