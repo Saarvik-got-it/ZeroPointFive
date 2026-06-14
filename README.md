@@ -26,7 +26,7 @@ Make sure you have Node >18.x installed.
 
 ### Static Demo Mode (Frontend-Only Deployments)
 
-For client demos where the backend is not hosted, the frontend can run independently in **Static Demo Mode**. It resolves all episodes, dynamic rails, transcripts, and articles from local static JSON files in the browser.
+For client demos where the backend is not hosted, the frontend can run independently in **Static Demo Mode**. It resolves all episodes, dynamic rails, and articles (featuring the rich Conversation Summary) from local static JSON files in the browser.
 
 #### Toggle the Data Source Mode
 Open [frontend/.env](file:///d:/ZeroPointFive/frontend/.env) and update the `VITE_DATA_SOURCE` variable:
@@ -74,7 +74,7 @@ To ingest a new podcast into the system:
    ```
    This will download the audio (if using Whisper), transcribe, generate the articles through Gemini, and write the structured JSON dataset in `backend/data/episodes/<slug>.json`.
 
-To regenerate the articles and AI summaries reusing the cached transcript (faster, avoids re-transcribing):
+To regenerate the articles and Conversation Summaries reusing the cached transcript (faster, avoids re-transcribing):
 
 ```bash
 npm run regenerate-video "<existing-episode-slug>"

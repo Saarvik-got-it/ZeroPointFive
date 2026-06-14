@@ -118,6 +118,7 @@ function runSync() {
         thumbnail: ep.thumbnail,
         status: ep.status,
         summary: ep.summary,
+        conversationSummary: ep.conversationSummary,
         takeaways: ep.takeaways,
         topics: ep.topics,
         transcript: ep.transcript,

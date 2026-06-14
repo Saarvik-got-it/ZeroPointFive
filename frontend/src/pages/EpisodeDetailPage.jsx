@@ -4,7 +4,6 @@ import { ArrowLeft, Target, Hash, Info, Beaker } from 'lucide-react';
 import EpisodeHero from '../features/episode/components/EpisodeHero';
 import ContentSection from '../features/episode/components/ContentSection';
 import ArticleCard from '../features/episode/components/ArticleCard';
-import TranscriptViewer from '../features/episode/components/TranscriptViewer';
 import { ContentRepository } from '@/repositories/ContentRepository';
 
 export default function EpisodeDetailPage() {
@@ -75,11 +74,43 @@ export default function EpisodeDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-12">
-            <ContentSection title="Executive Summary" icon={<Info className="w-6 h-6" />}>
-              <div className="bg-[#0f0f11] rounded-2xl p-6 md:p-8 border border-white/5 shadow-inner">
-                <p className="text-lg text-slate-300 leading-relaxed font-light">
-                  {episode.summary}
-                </p>
+            <ContentSection title="Conversation Summary" icon={<Info className="w-6 h-6" />}>
+              <div className="bg-[#0f0f11] rounded-2xl p-6 md:p-8 border border-white/5 shadow-inner space-y-6">
+                {episode.conversationSummary && episode.conversationSummary.title ? (
+                  <>
+                    <h3 className="text-xl font-bold text-white tracking-tight">
+                      {episode.conversationSummary.title}
+                    </h3>
+                    <p className="text-lg text-slate-350 leading-relaxed font-light">
+                      {episode.conversationSummary.introduction}
+                    </p>
+                    <div className="space-y-6 pt-2">
+                      {episode.conversationSummary.sections?.map((section, idx) => (
+                        <div key={idx} className="space-y-2">
+                          <h4 className="text-md font-semibold text-emerald-400 tracking-wide">
+                            {section.heading}
+                          </h4>
+                          <div className="text-slate-300 leading-relaxed font-light text-base space-y-4">
+                            {section.content?.split('\n\n').map((p, pIdx) => (
+                              <p key={pIdx}>{p}</p>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {episode.conversationSummary.conclusion && (
+                      <div className="pt-4 border-t border-white/5">
+                        <p className="text-slate-350 leading-relaxed font-light italic">
+                          {episode.conversationSummary.conclusion}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-lg text-slate-300 leading-relaxed font-light">
+                    {episode.summary}
+                  </p>
+                )}
               </div>
             </ContentSection>
 
@@ -97,8 +128,6 @@ export default function EpisodeDetailPage() {
                 ))}
               </div>
             </ContentSection>
-
-            <TranscriptViewer transcript={episode.transcript} />
           </div>
 
           {/* Sidebar */}
