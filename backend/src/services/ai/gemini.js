@@ -4,7 +4,12 @@ const { EPISODE_GENERATION_PROMPT } = require("./prompts/episode.prompt");
 // Initialize Gemini
 function getModel() {
   const apiKey = process.env.GEMINI_API_KEY;
-  const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  let modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  
+  // Upgrade to gemini-2.5-flash for stability with large, multilingual JSON generation
+  if (modelName === "gemini-2.5-flash-lite") {
+    modelName = "gemini-2.5-flash";
+  }
 
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is missing from environment variables.");
@@ -20,6 +25,26 @@ const episodeSchema = {
     summary: { type: SchemaType.STRING },
     takeaways: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
     topics: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+    conversationSummary: {
+      type: SchemaType.OBJECT,
+      properties: {
+        title: { type: SchemaType.STRING },
+        introduction: { type: SchemaType.STRING },
+        sections: {
+          type: SchemaType.ARRAY,
+          items: {
+            type: SchemaType.OBJECT,
+            properties: {
+              heading: { type: SchemaType.STRING },
+              content: { type: SchemaType.STRING }
+            },
+            required: ["heading", "content"]
+          }
+        },
+        conclusion: { type: SchemaType.STRING }
+      },
+      required: ["title", "introduction", "sections", "conclusion"]
+    },
     articles: {
       type: SchemaType.ARRAY,
       items: {
@@ -133,7 +158,7 @@ const episodeSchema = {
       },
     },
   },
-  required: ["summary", "takeaways", "topics", "articles"],
+  required: ["summary", "takeaways", "topics", "articles", "conversationSummary"],
 };
 
 /**
@@ -196,12 +221,23 @@ async function generateEpisodePayload(transcript, episodeMeta = null) {
         generationConfig: {
           responseMimeType: "application/json",
           responseSchema: episodeSchema,
+          maxOutputTokens: 8192,
         },
       })
     );
 
     const responseText = result.response.text();
-    const payload = JSON.parse(responseText);
+    let payload;
+    try {
+      payload = JSON.parse(responseText);
+    } catch (parseErr) {
+      console.error("\n================ RAW GEMINI RESPONSE ERROR ================");
+      console.error("Length of responseText:", responseText.length);
+      console.error("Last 1000 characters of responseText:");
+      console.error(responseText.substring(Math.max(0, responseText.length - 1000)));
+      console.error("=========================================================\n");
+      throw parseErr;
+    }
 
     // Dynamic Injection of self-contained properties
     if (payload.articles && Array.isArray(payload.articles) && episodeMeta) {

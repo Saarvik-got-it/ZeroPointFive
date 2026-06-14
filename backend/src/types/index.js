@@ -66,6 +66,20 @@
  */
 
 /**
+ * @typedef {Object} SummarySection
+ * @property {string} heading - Section title
+ * @property {string} content - Section paragraphs content
+ */
+
+/**
+ * @typedef {Object} ConversationSummary
+ * @property {string} title - Summary title
+ * @property {string} introduction - Summary introductory paragraph
+ * @property {SummarySection[]} sections - Detail sections
+ * @property {string} conclusion - Summary wrap-up statement
+ */
+
+/**
  * @typedef {Object} PodcastEpisode
  * @property {string} id - Unique identifier
  * @property {string} slug - URL-friendly slug
@@ -76,6 +90,7 @@
  * @property {'processing' | 'completed' | 'failed'} status - Current processing status
  * @property {string} [transcript] - Full transcript text
  * @property {string} [summary] - Episode summary
+ * @property {ConversationSummary} [conversationSummary] - Rich conversation summary
  * @property {string[]} [takeaways] - Array of key takeaways
  * @property {string[]} [topics] - Array of discussed topics
  * @property {Article[]} [articles] - Generated articles

@@ -33,6 +33,16 @@ function downloadAudio(videoId) {
       return resolve(finalOutputPath);
     }
 
+    // Ensure Node's directory is in the path so yt-dlp can find the JS runtime (required for signature deciphering)
+    const nodeDir = path.dirname(process.execPath);
+    const env = { ...process.env };
+    if (process.platform === "win32") {
+      const pathKey = Object.keys(env).find(k => k.toLowerCase() === "path") || "Path";
+      env[pathKey] = `${nodeDir}${path.delimiter}${env[pathKey] || ""}`;
+    } else {
+      env.PATH = `${nodeDir}${path.delimiter}${env.PATH || ""}`;
+    }
+
     // Spawn yt-dlp to extract audio in mp3 format
     const child = spawn("yt-dlp", [
       "-x",
@@ -40,7 +50,10 @@ function downloadAudio(videoId) {
       "--audio-quality", "0",
       "-o", outputPathPattern,
       url
-    ], { shell: true });
+    ], { 
+      shell: true,
+      env: env
+    });
 
     let stderrData = "";
 
